@@ -1,0 +1,311 @@
+[
+  {
+    "displayName": "CD-01: LSASS Credential Dumping Attempt",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceProcessEvents\n| where FileName in~ (\"procdump.exe\", \"procdump64.exe\", \"rundll32.exe\", \"taskmgr.exe\", \"werfault.exe\")\n| where ProcessCommandLine has_any (\"lsass\", \"comsvcs.dll\", \"MiniDump\")\n| project Timestamp, DeviceId, ReportId, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName"
+    },
+    "schedule": { "period": "1H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Possible LSASS credential dumping",
+        "description": "A process associated with credential dumping techniques (comsvcs.dll MiniDump, procdump) targeted LSASS memory.",
+        "severity": "high",
+        "category": "CredentialAccess",
+        "recommendedActions": "Validate whether the process was authorized. If not, contain the host and reset credentials for any accounts active on it.",
+        "mitreTechniques": ["T1003.001"],
+        "impactedAssets": [
+          { "@odata.type": "#microsoft.graph.security.impactedDeviceAssetTemplate", "identifier": "deviceId" }
+        ]
+      },
+      "organizationalScope": null,
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.collectInvestigationPackageResponseAction", "identifier": "deviceId" },
+        { "@odata.type": "#microsoft.graph.security.isolateDeviceResponseAction", "identifier": "deviceId", "isolationType": "selective" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-02: Encoded or Obfuscated PowerShell Execution",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceProcessEvents\n| where FileName =~ \"powershell.exe\"\n| where ProcessCommandLine has_any (\"-enc\", \"-EncodedCommand\", \"-e \", \"FromBase64String\", \"-nop\", \"-w hidden\", \"-noni\")\n| project Timestamp, DeviceId, ReportId, AccountName, ProcessCommandLine, InitiatingProcessFileName"
+    },
+    "schedule": { "period": "1H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Encoded/obfuscated PowerShell execution",
+        "description": "PowerShell was launched with encoding or hidden-window flags commonly used to evade detection or logging.",
+        "severity": "medium",
+        "category": "Execution",
+        "recommendedActions": "Decode the base64 command and review intent before taking action.",
+        "mitreTechniques": ["T1059.001", "T1027"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.collectInvestigationPackageResponseAction", "identifier": "deviceId" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-03: LOLBin Spawning External Network Connection",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceNetworkEvents\n| where InitiatingProcessFileName in~ (\"certutil.exe\", \"mshta.exe\", \"regsvr32.exe\", \"bitsadmin.exe\", \"wscript.exe\", \"cscript.exe\")\n| where RemoteIPType == \"Public\"\n| project Timestamp, DeviceId, ReportId, InitiatingProcessFileName, InitiatingProcessCommandLine, RemoteIP, RemoteUrl, RemotePort"
+    },
+    "schedule": { "period": "1H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Living-off-the-land binary making external connection",
+        "description": "A binary commonly abused for LOLBin techniques (certutil, mshta, regsvr32, bitsadmin, wscript, cscript) initiated a connection to a public IP.",
+        "severity": "medium",
+        "category": "CommandAndControl",
+        "recommendedActions": "Check RemoteUrl/RemoteIP reputation; block at the firewall/proxy if malicious.",
+        "mitreTechniques": ["T1218"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.collectInvestigationPackageResponseAction", "identifier": "deviceId" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-04: Scheduled Task or Service Created for Persistence",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceProcessEvents\n| where FileName in~ (\"schtasks.exe\", \"sc.exe\")\n| where ProcessCommandLine has_any (\"/create\", \"create\")\n| project Timestamp, DeviceId, ReportId, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName"
+    },
+    "schedule": { "period": "3H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "New scheduled task or service created",
+        "description": "schtasks.exe or sc.exe was used to create a new scheduled task or service, a common persistence technique.",
+        "severity": "medium",
+        "category": "Persistence",
+        "recommendedActions": "Review the created task/service name and binary path for legitimacy.",
+        "mitreTechniques": ["T1053.005", "T1543.003"]
+      },
+      "responseActions": []
+    }
+  },
+  {
+    "displayName": "CD-05: Office App Spawning Script Interpreter",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceProcessEvents\n| where InitiatingProcessFileName in~ (\"winword.exe\", \"excel.exe\", \"powerpnt.exe\", \"outlook.exe\")\n| where FileName in~ (\"powershell.exe\", \"cmd.exe\", \"wscript.exe\", \"cscript.exe\", \"mshta.exe\", \"regsvr32.exe\")\n| project Timestamp, DeviceId, ReportId, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine"
+    },
+    "schedule": { "period": "30M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Office application spawned script interpreter",
+        "description": "An Office application launched a script interpreter or command shell, consistent with malicious macro/document execution.",
+        "severity": "high",
+        "category": "InitialAccess",
+        "recommendedActions": "Isolate the host and retrieve the originating document for analysis.",
+        "mitreTechniques": ["T1204.002", "T1566.001"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.collectInvestigationPackageResponseAction", "identifier": "deviceId" },
+        { "@odata.type": "#microsoft.graph.security.isolateDeviceResponseAction", "identifier": "deviceId", "isolationType": "selective" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-06: Mass File Rename to Ransomware Extension",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceFileEvents\n| where ActionType == \"FileRenamed\"\n| where FileName has_any (\".locked\", \".encrypted\", \".crypt\", \".enc\", \".ransom\")\n| summarize FileCount = count(), Files = make_set(FileName, 20) by DeviceId, ReportId=any(ReportId), InitiatingProcessFileName, bin(Timestamp, 5m)\n| where FileCount > 20"
+    },
+    "schedule": { "period": "15M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Mass file rename consistent with ransomware",
+        "description": "More than 20 files were renamed to known ransomware extensions within a 5-minute window on a single device.",
+        "severity": "high",
+        "category": "Impact",
+        "recommendedActions": "Immediately isolate the device to prevent lateral spread; do not power off (preserve memory for forensics).",
+        "mitreTechniques": ["T1486"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.isolateDeviceResponseAction", "identifier": "deviceId", "isolationType": "full" },
+        { "@odata.type": "#microsoft.graph.security.collectInvestigationPackageResponseAction", "identifier": "deviceId" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-07: Security Tooling or Logging Disabled",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceProcessEvents\n| where ProcessCommandLine has_any (\"Set-MpPreference\", \"DisableRealtimeMonitoring\", \"netsh advfirewall set allprofiles state off\", \"wevtutil cl\", \"auditpol /clear\", \"Stop-Service WinDefend\")\n| project Timestamp, DeviceId, ReportId, AccountName, FileName, ProcessCommandLine"
+    },
+    "schedule": { "period": "30M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Attempt to disable security controls or clear logs",
+        "description": "A command associated with disabling Defender, the firewall, or clearing event logs was executed.",
+        "severity": "high",
+        "category": "DefenseEvasion",
+        "recommendedActions": "Treat as high-confidence malicious activity pending review; verify no legitimate maintenance window explains it.",
+        "mitreTechniques": ["T1562.001", "T1070.001"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.collectInvestigationPackageResponseAction", "identifier": "deviceId" },
+        { "@odata.type": "#microsoft.graph.security.isolateDeviceResponseAction", "identifier": "deviceId", "isolationType": "selective" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-08: Archive Utility Staging Sensitive Data",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceProcessEvents\n| where FileName in~ (\"rar.exe\", \"7z.exe\", \"winrar.exe\", \"zip.exe\")\n| where ProcessCommandLine has_any (\"C:\\\\Users\", \"\\\\Desktop\", \"\\\\Documents\", \"SYSVOL\", \"NETLOGON\")\n| project Timestamp, DeviceId, ReportId, AccountName, ProcessCommandLine"
+    },
+    "schedule": { "period": "3H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Archive utility used against sensitive paths",
+        "description": "An archiving tool compressed data from user profile directories or SYSVOL/NETLOGON shares, consistent with exfiltration staging.",
+        "severity": "medium",
+        "category": "CollectionExfiltration",
+        "recommendedActions": "Identify the archive destination and check for outbound transfer.",
+        "mitreTechniques": ["T1560.001"]
+      },
+      "responseActions": []
+    }
+  },
+  {
+    "displayName": "CD-09: Network Beaconing to Public IP",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceNetworkEvents\n| where RemoteIPType == \"Public\" and ActionType == \"ConnectionSuccess\"\n| summarize ConnectionCount = count(), ReportId=any(ReportId) by DeviceId, RemoteIP, InitiatingProcessFileName\n| where ConnectionCount > 20"
+    },
+    "schedule": { "period": "6H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Possible C2 beaconing pattern",
+        "description": "A process made more than 20 connections to the same external IP, consistent with beaconing behavior.",
+        "severity": "medium",
+        "category": "CommandAndControl",
+        "recommendedActions": "Check interval regularity and IP reputation; correlate with proxy logs.",
+        "mitreTechniques": ["T1071", "T1571"]
+      },
+      "responseActions": []
+    }
+  },
+  {
+    "displayName": "CD-10: Rare External Domain Contacted by Scripting Engine",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceNetworkEvents\n| where ActionType == \"ConnectionSuccess\"\n| where InitiatingProcessFileName in~ (\"powershell.exe\", \"rundll32.exe\", \"regsvr32.exe\", \"mshta.exe\")\n| where RemoteIPType == \"Public\"\n| summarize FirstSeen = min(Timestamp), Devices = dcount(DeviceId), ReportId=any(ReportId) by RemoteUrl, InitiatingProcessFileName\n| where Devices == 1"
+    },
+    "schedule": { "period": "6H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Scripting engine contacted a rare external domain",
+        "description": "A scripting/LOLBin process resolved a domain not seen elsewhere in the environment.",
+        "severity": "low",
+        "category": "CommandAndControl",
+        "recommendedActions": "Investigate domain age and reputation; expand to threat intel enrichment.",
+        "mitreTechniques": ["T1071.001"]
+      },
+      "responseActions": []
+    }
+  },
+  {
+    "displayName": "CD-11: Impossible Travel Logon",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "IdentityLogonEvents\n| where ActionType == \"LogonSuccess\"\n| summarize Countries = make_set(Location), LogonCount = count(), ReportId=any(ReportId) by AccountUpn, bin(Timestamp, 1h)\n| where array_length(Countries) > 1"
+    },
+    "schedule": { "period": "1H" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Impossible travel between logons",
+        "description": "The same account authenticated successfully from geographically distant locations within a single hour.",
+        "severity": "medium",
+        "category": "InitialAccess",
+        "recommendedActions": "Confirm with the user; if unrecognized, force reauthentication and review active sessions.",
+        "mitreTechniques": ["T1078"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.disableUserResponseAction", "identifier": "userId" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-12: Password Spray Pattern",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "IdentityLogonEvents\n| where ActionType == \"LogonFailed\"\n| summarize FailedAccounts = dcount(AccountUpn), Attempts = count(), ReportId=any(ReportId) by DeviceId=IPAddress, bin(Timestamp, 15m)\n| where FailedAccounts > 10 and Attempts < (FailedAccounts * 3)"
+    },
+    "schedule": { "period": "15M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Password spray pattern detected",
+        "description": "A single source produced low-volume failed logons across many distinct accounts within 15 minutes.",
+        "severity": "high",
+        "category": "CredentialAccess",
+        "recommendedActions": "Block the source IP at the identity provider/conditional access layer and review affected accounts for success events.",
+        "mitreTechniques": ["T1110.003"]
+      },
+      "responseActions": []
+    }
+  },
+  {
+    "displayName": "CD-13: Account Added to Sensitive Security Group",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "IdentityDirectoryEvents\n| where ActionType == \"Add member to group\"\n| where TargetObjectName has_any (\"Domain Admins\", \"Enterprise Admins\", \"Administrators\")\n| project Timestamp, ReportId, AccountName, TargetObjectName, AdditionalFields"
+    },
+    "schedule": { "period": "15M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Privileged group membership change",
+        "description": "An account was added to a highly privileged security group (Domain Admins, Enterprise Admins, or local Administrators).",
+        "severity": "high",
+        "category": "PrivilegeEscalation",
+        "recommendedActions": "Confirm the change against an approved change ticket; revert if unauthorized.",
+        "mitreTechniques": ["T1098"]
+      },
+      "responseActions": []
+    }
+  },
+  {
+    "displayName": "CD-14: New MFA Method Registered Then Immediate Risky Sign-in",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "IdentityLogonEvents\n| where ActionType in (\"MFA registration\", \"LogonSuccess\")\n| sort by AccountUpn, Timestamp asc\n| serialize\n| extend PrevAction = prev(ActionType), PrevAccount = prev(AccountUpn), PrevTime = prev(Timestamp)\n| where ActionType == \"LogonSuccess\" and PrevAction == \"MFA registration\" and AccountUpn == PrevAccount\n| where Timestamp - PrevTime < 30m\n| project Timestamp, ReportId, AccountUpn, Location, IPAddress"
+    },
+    "schedule": { "period": "30M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "MFA method registered immediately before sign-in",
+        "description": "A new MFA method was registered for an account and a successful sign-in followed within 30 minutes, consistent with MFA-fatigue/account-takeover patterns.",
+        "severity": "high",
+        "category": "CredentialAccess",
+        "recommendedActions": "Verify the MFA registration with the user; if unauthorized, remove the method and force password reset.",
+        "mitreTechniques": ["T1556.006"]
+      },
+      "responseActions": [
+        { "@odata.type": "#microsoft.graph.security.disableUserResponseAction", "identifier": "userId" }
+      ]
+    }
+  },
+  {
+    "displayName": "CD-15: Phishing Email with Lookalike Domain and Urgency Language",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "EmailEvents\n| where DeliveryLocation == \"Inbox\"\n| where SenderFromDomain matches regex @\"[o0]ffice[- ]?365|paypa1|micros0ft|g00gle\"\n| where Subject has_any (\"urgent\", \"action required\", \"verify your account\", \"password expires\")\n| project Timestamp, ReportId, NetworkMessageId, RecipientEmailAddress, SenderFromAddress, SenderFromDomain, Subject, SenderIPv4"
+    },
+    "schedule": { "period": "15M" },
+    "detectionAction": {
+      "alertTemplate": {
+        "title": "Likely phishing email delivered to inbox",
+        "description": "An email from a lookalike domain with urgency-themed subject language reached the inbox.",
+        "severity": "medium",
+        "category": "InitialAccess",
+        "recommendedActions": "Soft-delete/quarantine the message across mailboxes and add sender domain to block list.",
+        "mitreTechniques": ["T1566.002"]
+      },
+      "responseActions": []
+    }
+  }
+]

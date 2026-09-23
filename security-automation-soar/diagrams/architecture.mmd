@@ -1,0 +1,14 @@
+flowchart TD
+    A[SIEM: Sentinel / Defender XDR<br/>Detection fires] -->|webhook / API poll| B[Orchestrator]
+    B --> C[Enrichment]
+    C -->|TI reputation, CMDB, AD/Entra context| B
+    B --> D[ServiceNow: Create Security Incident]
+    B --> E{Severity High/Critical<br/>AND action pre-approved?}
+    E -->|Yes| F[CrowdStrike Falcon API<br/>Isolate host / disable user / collect evidence]
+    E -->|No| G[ServiceNow: Create approval task<br/>Wait for analyst]
+    G -->|Approved| F
+    F -->|action result| D
+    D --> H[Case closed by analyst]
+    H -->|resolution code = false positive| I[Orchestrator reverses containment]
+    I --> F
+    H -->|resolution code = true positive| J[Update detection status<br/>in Sentinel/Defender + CrowdStrike]
