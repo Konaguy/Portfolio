@@ -1,0 +1,110 @@
+{
+  "closed_cases": [
+    {"case_id": "c1", "summary": "Encoded PowerShell execution on finance laptop, connected to known C2 IP", "resolution": "Confirmed malicious, IcedID loader, host reimaged", "was_false_positive": false},
+    {"case_id": "c2", "summary": "Encoded PowerShell used by IT automation script (Datto RMM)", "resolution": "False positive, known automation tool, added to allowlist", "was_false_positive": true},
+    {"case_id": "c3", "summary": "Mass file rename to .locked extension on file server", "resolution": "Ransomware, contained and rebuilt from backup", "was_false_positive": false},
+    {"case_id": "c4", "summary": "Impossible travel login for sales account, US then Germany within an hour", "resolution": "User was on corporate VPN exit node in Germany, false positive", "was_false_positive": true},
+    {"case_id": "c5", "summary": "LSASS memory access via comsvcs.dll MiniDump on domain controller", "resolution": "Confirmed credential dumping, attacker had domain admin, full IR engaged", "was_false_positive": false},
+    {"case_id": "c6", "summary": "Password spray pattern from single source IP against 40 accounts", "resolution": "Confirmed external attacker, source IP blocked at firewall", "was_false_positive": false},
+    {"case_id": "c7", "summary": "Office macro spawned PowerShell on accounting workstation", "resolution": "Confirmed phishing payload, Emotet variant, host isolated", "was_false_positive": false},
+    {"case_id": "c8", "summary": "Scheduled task created by backup software during maintenance window", "resolution": "False positive, expected behavior of Veeam agent", "was_false_positive": true}
+  ],
+  "labeled_alerts": [
+    {
+      "alert_id": "eval-001",
+      "source": "defender",
+      "raw_title": "Encoded PowerShell Execution",
+      "raw_description": "powershell.exe -enc <base64> launched by winword.exe, contacted external IP",
+      "entity_type": "host",
+      "entity_value": "WIN-FIN-04",
+      "asset_criticality": "crown_jewel",
+      "timestamp": "2026-09-01T14:22:00Z",
+      "mitre_techniques": ["T1059.001", "T1204.002"],
+      "ground_truth": {
+        "severity": "high",
+        "false_positive": false,
+        "recommended_action": "contain_immediately"
+      }
+    },
+    {
+      "alert_id": "eval-002",
+      "source": "sentinel",
+      "raw_title": "Encoded PowerShell Execution",
+      "raw_description": "powershell.exe -enc <base64> launched by DattoRMM.exe on managed endpoint",
+      "entity_type": "host",
+      "entity_value": "WIN-IT-11",
+      "asset_criticality": "standard",
+      "timestamp": "2026-09-02T09:10:00Z",
+      "mitre_techniques": ["T1059.001"],
+      "ground_truth": {
+        "severity": "low",
+        "false_positive": true,
+        "recommended_action": "close_false_positive"
+      }
+    },
+    {
+      "alert_id": "eval-003",
+      "source": "defender",
+      "raw_title": "Mass File Rename to Ransomware Extension",
+      "raw_description": "312 files renamed to .locked in 4 minutes on file server FS-01",
+      "entity_type": "host",
+      "entity_value": "FS-01",
+      "asset_criticality": "crown_jewel",
+      "timestamp": "2026-09-03T02:14:00Z",
+      "mitre_techniques": ["T1486"],
+      "ground_truth": {
+        "severity": "critical",
+        "false_positive": false,
+        "recommended_action": "contain_immediately"
+      }
+    },
+    {
+      "alert_id": "eval-004",
+      "source": "sentinel",
+      "raw_title": "Impossible Travel Logon",
+      "raw_description": "Account jsmith@corp.com signed in from US then Germany within 40 minutes",
+      "entity_type": "account",
+      "entity_value": "jsmith@corp.com",
+      "asset_criticality": "standard",
+      "timestamp": "2026-09-04T16:45:00Z",
+      "mitre_techniques": ["T1078"],
+      "ground_truth": {
+        "severity": "low",
+        "false_positive": true,
+        "recommended_action": "monitor"
+      }
+    },
+    {
+      "alert_id": "eval-005",
+      "source": "defender",
+      "raw_title": "LSASS Credential Dumping Attempt",
+      "raw_description": "rundll32.exe used comsvcs.dll MiniDump against lsass.exe on domain controller DC-01",
+      "entity_type": "host",
+      "entity_value": "DC-01",
+      "asset_criticality": "crown_jewel",
+      "timestamp": "2026-09-05T03:30:00Z",
+      "mitre_techniques": ["T1003.001"],
+      "ground_truth": {
+        "severity": "critical",
+        "false_positive": false,
+        "recommended_action": "contain_immediately"
+      }
+    },
+    {
+      "alert_id": "eval-006",
+      "source": "sentinel",
+      "raw_title": "New Scheduled Task Created",
+      "raw_description": "Veeam.Backup.Service created scheduled task 'VeeamBackupJob_Nightly' during maintenance window",
+      "entity_type": "host",
+      "entity_value": "BKP-02",
+      "asset_criticality": "standard",
+      "timestamp": "2026-09-06T01:00:00Z",
+      "mitre_techniques": ["T1053.005"],
+      "ground_truth": {
+        "severity": "low",
+        "false_positive": true,
+        "recommended_action": "close_false_positive"
+      }
+    }
+  ]
+}

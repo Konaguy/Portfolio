@@ -18,6 +18,7 @@ detection languages), not as a buzzword.
 | [`security-automation-soar/`](./security-automation-soar) | End-to-end SOAR design: SIEM → EDR → ITSM orchestration, 15 production-ready detection rules for Defender/Sentinel, and documented response playbooks. |
 | [`sigma-rule-translator/`](./sigma-rule-translator) | A CLI tool that translates vendor-agnostic Sigma detection rules into Microsoft Sentinel KQL and CrowdStrike Falcon query syntax, so detection logic isn't locked to one platform. |
 | [`crowdstrike-rtr-toolkit/`](./crowdstrike-rtr-toolkit) | A tested, packaged Python library wrapping the CrowdStrike Falcon Real Time Response API for common incident response actions (containment, process kill, evidence collection). |
+| [`llm-soc-copilot/`](./llm-soc-copilot) | An LLM-powered alert triage assistant: RAG-grounded enrichment over closed cases, schema-validated structured output via forced tool-use, a hallucinated-citation guard, and an eval harness scoring verdicts against labeled ground truth. |
 
 ## Why these three
 
@@ -29,6 +30,10 @@ detection languages), not as a buzzword.
   write in one of them.
 - **The RTR toolkit** shows I write production-quality code: tested, typed,
   documented, safe to hand to a teammate.
+- **The SOC copilot** shows applied AI engineering with the guardrails that
+  matter in a security context — forced structured output, a hallucination
+  check on RAG citations, and an eval harness rather than a demo that "seems
+  to work."
 
 ## Background
 
