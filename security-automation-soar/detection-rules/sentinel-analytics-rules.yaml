@@ -1,0 +1,450 @@
+# Microsoft Sentinel Scheduled Analytics Rules
+# Format matches the Azure-Sentinel GitHub content structure (importable via
+# Content Hub / az sentinel alert-rule create). Table names assume the
+# Microsoft Defender XDR data connector (M365 Defender) is enabled, which
+# streams DeviceProcessEvents, DeviceNetworkEvents, DeviceFileEvents,
+# IdentityLogonEvents/SigninLogs, IdentityDirectoryEvents, and EmailEvents
+# into the Sentinel workspace. Swap SigninLogs for IdentityLogonEvents if
+# you're on Entra ID Connector instead of Defender for Identity.
+
+- id: SR-01-lsass-dump
+  name: "LSASS Credential Dumping Attempt"
+  description: |
+    Detects processes commonly used for LSASS memory dumping (procdump,
+    comsvcs.dll MiniDump, rundll32 abuse).
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceProcessEvents]
+  queryFrequency: 1H
+  queryPeriod: 1H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [CredentialAccess]
+  relevantTechniques: [T1003.001]
+  query: |
+    DeviceProcessEvents
+    | where FileName in~ ("procdump.exe", "procdump64.exe", "rundll32.exe", "taskmgr.exe", "werfault.exe")
+    | where ProcessCommandLine has_any ("lsass", "comsvcs.dll", "MiniDump")
+    | project TimeGenerated, DeviceId, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+    - entityType: Account
+      fieldMappings: [{ identifier: Name, columnName: AccountName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host] }
+
+- id: SR-02-encoded-powershell
+  name: "Encoded or Obfuscated PowerShell Execution"
+  description: |
+    Flags PowerShell invoked with base64 encoding or hidden-window flags
+    often used to evade logging.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceProcessEvents]
+  queryFrequency: 1H
+  queryPeriod: 1H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [Execution, DefenseEvasion]
+  relevantTechniques: [T1059.001, T1027]
+  query: |
+    DeviceProcessEvents
+    | where FileName =~ "powershell.exe"
+    | where ProcessCommandLine has_any ("-enc", "-EncodedCommand", "-e ", "FromBase64String", "-nop", "-w hidden", "-noni")
+    | project TimeGenerated, DeviceId, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+    - entityType: Account
+      fieldMappings: [{ identifier: Name, columnName: AccountName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host, Account] }
+
+- id: SR-03-lolbin-network
+  name: "LOLBin Spawning External Network Connection"
+  description: |
+    Detects living-off-the-land binaries (certutil, mshta, regsvr32,
+    bitsadmin, wscript, cscript) connecting to public IPs.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceNetworkEvents]
+  queryFrequency: 1H
+  queryPeriod: 1H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [CommandAndControl]
+  relevantTechniques: [T1218]
+  query: |
+    DeviceNetworkEvents
+    | where InitiatingProcessFileName in~ ("certutil.exe", "mshta.exe", "regsvr32.exe", "bitsadmin.exe", "wscript.exe", "cscript.exe")
+    | where RemoteIPType == "Public"
+    | project TimeGenerated, DeviceId, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine, RemoteIP, RemoteUrl, RemotePort
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+    - entityType: IP
+      fieldMappings: [{ identifier: Address, columnName: RemoteIP }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host] }
+
+- id: SR-04-scheduled-task-persistence
+  name: "Scheduled Task or Service Created for Persistence"
+  description: |
+    Detects schtasks.exe or sc.exe used to create a new task or service.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceProcessEvents]
+  queryFrequency: 3H
+  queryPeriod: 3H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [Persistence]
+  relevantTechniques: [T1053.005, T1543.003]
+  query: |
+    DeviceProcessEvents
+    | where FileName in~ ("schtasks.exe", "sc.exe")
+    | where ProcessCommandLine has_any ("/create", "create")
+    | project TimeGenerated, DeviceId, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host] }
+
+- id: SR-05-office-spawns-script
+  name: "Office Application Spawning Script Interpreter"
+  description: |
+    Detects Office apps launching PowerShell, cmd, or other script
+    interpreters — typical of malicious macro execution.
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceProcessEvents]
+  queryFrequency: 30M
+  queryPeriod: 30M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [InitialAccess, Execution]
+  relevantTechniques: [T1204.002, T1566.001]
+  query: |
+    DeviceProcessEvents
+    | where InitiatingProcessFileName in~ ("winword.exe", "excel.exe", "powerpnt.exe", "outlook.exe")
+    | where FileName in~ ("powershell.exe", "cmd.exe", "wscript.exe", "cscript.exe", "mshta.exe", "regsvr32.exe")
+    | project TimeGenerated, DeviceId, DeviceName, AccountName, InitiatingProcessFileName, FileName, ProcessCommandLine
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+    - entityType: Account
+      fieldMappings: [{ identifier: Name, columnName: AccountName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host, Account] }
+
+- id: SR-06-mass-file-rename-ransomware
+  name: "Mass File Rename to Ransomware Extension"
+  description: |
+    Detects bulk file renames to known ransomware extensions within a
+    short window on a single device.
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceFileEvents]
+  queryFrequency: 15M
+  queryPeriod: 15M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [Impact]
+  relevantTechniques: [T1486]
+  query: |
+    DeviceFileEvents
+    | where ActionType == "FileRenamed"
+    | where FileName has_any (".locked", ".encrypted", ".crypt", ".enc", ".ransom")
+    | summarize FileCount = count(), Files = make_set(FileName, 20) by DeviceId, DeviceName, InitiatingProcessFileName, bin(TimeGenerated, 5m)
+    | where FileCount > 20
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host] }
+
+- id: SR-07-security-tooling-disabled
+  name: "Security Tooling or Logging Disabled"
+  description: |
+    Detects commands that disable Defender, the firewall, or clear
+    event logs/audit policy.
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceProcessEvents]
+  queryFrequency: 30M
+  queryPeriod: 30M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [DefenseEvasion]
+  relevantTechniques: [T1562.001, T1070.001]
+  query: |
+    DeviceProcessEvents
+    | where ProcessCommandLine has_any ("Set-MpPreference", "DisableRealtimeMonitoring", "netsh advfirewall set allprofiles state off", "wevtutil cl", "auditpol /clear", "Stop-Service WinDefend")
+    | project TimeGenerated, DeviceId, DeviceName, AccountName, FileName, ProcessCommandLine
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+    - entityType: Account
+      fieldMappings: [{ identifier: Name, columnName: AccountName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host] }
+
+- id: SR-08-archive-staging
+  name: "Archive Utility Staging Sensitive Data"
+  description: |
+    Detects archive tools (rar/7z/winrar/zip) compressing data from user
+    profiles or SYSVOL/NETLOGON — possible exfil staging.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceProcessEvents]
+  queryFrequency: 3H
+  queryPeriod: 3H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [Collection, Exfiltration]
+  relevantTechniques: [T1560.001]
+  query: |
+    DeviceProcessEvents
+    | where FileName in~ ("rar.exe", "7z.exe", "winrar.exe", "zip.exe")
+    | where ProcessCommandLine has_any (@"C:\Users", @"\Desktop", @"\Documents", "SYSVOL", "NETLOGON")
+    | project TimeGenerated, DeviceId, DeviceName, AccountName, ProcessCommandLine
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host] }
+
+- id: SR-09-beaconing
+  name: "Network Beaconing to Public IP"
+  description: |
+    Flags a process making an unusually high number of connections to the
+    same external IP, consistent with C2 beaconing.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceNetworkEvents]
+  queryFrequency: 6H
+  queryPeriod: 6H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [CommandAndControl]
+  relevantTechniques: [T1071, T1571]
+  query: |
+    DeviceNetworkEvents
+    | where RemoteIPType == "Public" and ActionType == "ConnectionSuccess"
+    | summarize ConnectionCount = count() by DeviceId, DeviceName, RemoteIP, InitiatingProcessFileName
+    | where ConnectionCount > 20
+  entityMappings:
+    - entityType: Host
+      fieldMappings: [{ identifier: FullName, columnName: DeviceName }]
+    - entityType: IP
+      fieldMappings: [{ identifier: Address, columnName: RemoteIP }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Host, IP] }
+
+- id: SR-10-rare-domain-scripting
+  name: "Rare External Domain Contacted by Scripting Engine"
+  description: |
+    Detects a scripting/LOLBin process resolving a domain not seen
+    elsewhere in the tenant.
+  severity: Low
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [DeviceNetworkEvents]
+  queryFrequency: 6H
+  queryPeriod: 6H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [CommandAndControl]
+  relevantTechniques: [T1071.001]
+  query: |
+    DeviceNetworkEvents
+    | where ActionType == "ConnectionSuccess"
+    | where InitiatingProcessFileName in~ ("powershell.exe", "rundll32.exe", "regsvr32.exe", "mshta.exe")
+    | where RemoteIPType == "Public"
+    | summarize FirstSeen = min(TimeGenerated), Devices = dcount(DeviceId) by RemoteUrl, InitiatingProcessFileName
+    | where Devices == 1
+  entityMappings:
+    - entityType: URL
+      fieldMappings: [{ identifier: Url, columnName: RemoteUrl }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [URL] }
+
+- id: SR-11-impossible-travel
+  name: "Impossible Travel Logon"
+  description: |
+    Same account authenticates successfully from geographically distant
+    locations within one hour.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: AzureActiveDirectory
+      dataTypes: [SigninLogs]
+  queryFrequency: 1H
+  queryPeriod: 1H
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [InitialAccess]
+  relevantTechniques: [T1078]
+  query: |
+    SigninLogs
+    | where ResultType == 0
+    | summarize Countries = make_set(LocationDetails.countryOrRegion), LogonCount = count() by UserPrincipalName, bin(TimeGenerated, 1h)
+    | where array_length(Countries) > 1
+  entityMappings:
+    - entityType: Account
+      fieldMappings: [{ identifier: FullName, columnName: UserPrincipalName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Account] }
+
+- id: SR-12-password-spray
+  name: "Password Spray Pattern"
+  description: |
+    A single source IP produces low-volume failed logons across many
+    distinct accounts in a short window.
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: AzureActiveDirectory
+      dataTypes: [SigninLogs]
+  queryFrequency: 15M
+  queryPeriod: 15M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [CredentialAccess]
+  relevantTechniques: [T1110.003]
+  query: |
+    SigninLogs
+    | where ResultType != 0
+    | summarize FailedAccounts = dcount(UserPrincipalName), Attempts = count() by IPAddress, bin(TimeGenerated, 15m)
+    | where FailedAccounts > 10 and Attempts < (FailedAccounts * 3)
+  entityMappings:
+    - entityType: IP
+      fieldMappings: [{ identifier: Address, columnName: IPAddress }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [IP] }
+
+- id: SR-13-privileged-group-change
+  name: "Account Added to Sensitive Security Group"
+  description: |
+    Detects membership changes to Domain Admins, Enterprise Admins, or
+    local Administrators groups.
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [IdentityDirectoryEvents]
+  queryFrequency: 15M
+  queryPeriod: 15M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [PrivilegeEscalation]
+  relevantTechniques: [T1098]
+  query: |
+    IdentityDirectoryEvents
+    | where ActionType == "Add member to group"
+    | where TargetObjectName has_any ("Domain Admins", "Enterprise Admins", "Administrators")
+    | project TimeGenerated, AccountName, TargetObjectName, AdditionalFields
+  entityMappings:
+    - entityType: Account
+      fieldMappings: [{ identifier: Name, columnName: AccountName }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Account] }
+
+- id: SR-14-mfa-then-risky-signin
+  name: "New MFA Method Registered Then Immediate Risky Sign-in"
+  description: |
+    A new MFA method is registered for an account and a successful
+    sign-in follows within 30 minutes — a common ATO/MFA-fatigue pattern.
+  severity: High
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [IdentityLogonEvents]
+  queryFrequency: 30M
+  queryPeriod: 30M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [CredentialAccess]
+  relevantTechniques: [T1556.006]
+  query: |
+    IdentityLogonEvents
+    | where ActionType in ("MFA registration", "LogonSuccess")
+    | sort by AccountUpn, TimeGenerated asc
+    | serialize
+    | extend PrevAction = prev(ActionType), PrevAccount = prev(AccountUpn), PrevTime = prev(TimeGenerated)
+    | where ActionType == "LogonSuccess" and PrevAction == "MFA registration" and AccountUpn == PrevAccount
+    | where TimeGenerated - PrevTime < 30m
+    | project TimeGenerated, AccountUpn, Location, IPAddress
+  entityMappings:
+    - entityType: Account
+      fieldMappings: [{ identifier: FullName, columnName: AccountUpn }]
+    - entityType: IP
+      fieldMappings: [{ identifier: Address, columnName: IPAddress }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Account] }
+
+- id: SR-15-phishing-lookalike-domain
+  name: "Phishing Email with Lookalike Domain and Urgency Language"
+  description: |
+    Inbound email from a lookalike/typosquatted domain with urgency-themed
+    subject language delivered to the inbox.
+  severity: Medium
+  status: Enabled
+  requiredDataConnectors:
+    - connectorId: MicrosoftThreatProtection
+      dataTypes: [EmailEvents]
+  queryFrequency: 15M
+  queryPeriod: 15M
+  triggerOperator: gt
+  triggerThreshold: 0
+  tactics: [InitialAccess]
+  relevantTechniques: [T1566.002]
+  query: |
+    EmailEvents
+    | where DeliveryLocation == "Inbox"
+    | where SenderFromDomain matches regex @"[o0]ffice[- ]?365|paypa1|micros0ft|g00gle"
+    | where Subject has_any ("urgent", "action required", "verify your account", "password expires")
+    | project TimeGenerated, NetworkMessageId, RecipientEmailAddress, SenderFromAddress, SenderFromDomain, Subject, SenderIPv4
+  entityMappings:
+    - entityType: Account
+      fieldMappings: [{ identifier: Name, columnName: RecipientEmailAddress }]
+    - entityType: MailMessage
+      fieldMappings: [{ identifier: NetworkMessageId, columnName: NetworkMessageId }]
+  incidentConfiguration:
+    createIncident: true
+    groupingConfiguration: { enabled: true, groupByEntities: [Account] }
