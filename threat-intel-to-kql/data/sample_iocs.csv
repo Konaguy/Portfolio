@@ -1,0 +1,7 @@
+indicator,type,description
+185.220.101.45,ipv4,C2 server
+malicious-update[.]net,domain,Fake update domain
+44d88612fea8a8f36de82e1278abb02f,md5,Dropper
+6f1e6ab7e0f7e2c9d3b4a5c6d7e8f9a0b1c2d3e4,sha1,Loader
+CVE-2024-21412,cve,SmartScreen bypass used in delivery
+attacker@phish-mail[.]com,email,Phishing sender
