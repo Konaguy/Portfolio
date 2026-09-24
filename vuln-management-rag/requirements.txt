@@ -1,0 +1,14 @@
+# Core runtime
+anthropic>=0.40
+langgraph>=0.2.28
+qdrant-client>=1.9
+pydantic>=2.5
+
+# Frontend (only needed to run the Chainlit app; not needed for tests)
+chainlit>=1.1
+
+# Optional: real embeddings. Omit to use the dependency-free hashing embedder.
+# sentence-transformers>=2.6
+
+# Dev / tests
+pytest>=8.0
