@@ -7,6 +7,10 @@ pydantic>=2.5
 # Frontend (only needed to run the Chainlit app; not needed for tests)
 chainlit>=1.1
 
+# Azure connector (only needed for a live Defender/MDVM scan; the offline
+# FakeDefenderConnector and the tests do not require it)
+requests>=2.31
+
 # Optional: real embeddings. Omit to use the dependency-free hashing embedder.
 # sentence-transformers>=2.6
 

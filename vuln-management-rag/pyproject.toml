@@ -17,6 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 frontend = ["chainlit>=1.1"]
 embeddings = ["sentence-transformers>=2.6"]
+azure = ["requests>=2.31"]
 dev = ["pytest>=8.0"]
 
 [tool.setuptools.packages.find]

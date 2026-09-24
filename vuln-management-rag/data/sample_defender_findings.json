@@ -1,0 +1,160 @@
+{
+  "value": [
+    {
+      "deviceName": "srv-web-01.corp.contoso.com",
+      "osPlatform": "WindowsServer2019",
+      "cveId": "CVE-2021-44228",
+      "vulnerabilitySeverityLevel": "Critical",
+      "cvssScore": 10.0,
+      "softwareVendor": "apache",
+      "softwareName": "log4j",
+      "softwareVersion": "2.14.0",
+      "recommendedSecurityUpdate": "Upgrade Apache Log4j to 2.17.1",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "srv-web-01.corp.contoso.com",
+      "osPlatform": "WindowsServer2019",
+      "cveId": "CVE-2022-22965",
+      "vulnerabilitySeverityLevel": "High",
+      "cvssScore": 9.8,
+      "softwareVendor": "vmware",
+      "softwareName": "spring_framework",
+      "softwareVersion": "5.3.17",
+      "recommendedSecurityUpdate": "Upgrade Spring Framework to 5.3.18+",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "srv-web-01.corp.contoso.com",
+      "osPlatform": "WindowsServer2019",
+      "cveId": "CVE-2016-2183",
+      "vulnerabilitySeverityLevel": "Medium",
+      "cvssScore": 5.9,
+      "softwareVendor": "openssl",
+      "softwareName": "openssl",
+      "softwareVersion": "1.0.2k",
+      "recommendedSecurityUpdate": "Disable 3DES cipher suites; upgrade OpenSSL",
+      "exploitabilityLevel": "NoExploit"
+    },
+    {
+      "deviceName": "srv-sql-01.corp.contoso.com",
+      "osPlatform": "WindowsServer2022",
+      "cveId": "CVE-2019-0708",
+      "vulnerabilitySeverityLevel": "Critical",
+      "cvssScore": 9.8,
+      "softwareVendor": "microsoft",
+      "softwareName": "windows_server_2022",
+      "softwareVersion": "10.0.20348.1",
+      "recommendedSecurityUpdate": "Apply Microsoft update for CVE-2019-0708 (BlueKeep)",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "srv-sql-01.corp.contoso.com",
+      "osPlatform": "WindowsServer2022",
+      "cveId": "CVE-2021-34527",
+      "vulnerabilitySeverityLevel": "High",
+      "cvssScore": 8.8,
+      "softwareVendor": "microsoft",
+      "softwareName": "windows_print_spooler",
+      "softwareVersion": "10.0.20348.1",
+      "recommendedSecurityUpdate": "Apply Microsoft update for CVE-2021-34527 (PrintNightmare)",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "srv-sql-01.corp.contoso.com",
+      "osPlatform": "WindowsServer2022",
+      "cveId": "CVE-2022-34718",
+      "vulnerabilitySeverityLevel": "High",
+      "cvssScore": 9.8,
+      "softwareVendor": "microsoft",
+      "softwareName": "windows_tcpip",
+      "softwareVersion": "10.0.20348.1",
+      "recommendedSecurityUpdate": "Apply the September 2022 cumulative update",
+      "exploitabilityLevel": "ExploitIsInKit"
+    },
+    {
+      "deviceName": "pc-hr-07.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2024-21412",
+      "vulnerabilitySeverityLevel": "High",
+      "cvssScore": 8.1,
+      "softwareVendor": "microsoft",
+      "softwareName": "windows_smartscreen",
+      "softwareVersion": "10.0.22631.2861",
+      "recommendedSecurityUpdate": "Apply the February 2024 cumulative update",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "pc-hr-07.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2023-44487",
+      "vulnerabilitySeverityLevel": "Medium",
+      "cvssScore": 5.3,
+      "softwareVendor": "google",
+      "softwareName": "chrome",
+      "softwareVersion": "117.0.5938.132",
+      "recommendedSecurityUpdate": "Update Google Chrome to the latest stable channel",
+      "exploitabilityLevel": "NoExploit"
+    },
+    {
+      "deviceName": "pc-hr-07.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2023-36884",
+      "vulnerabilitySeverityLevel": "High",
+      "cvssScore": 8.3,
+      "softwareVendor": "microsoft",
+      "softwareName": "office",
+      "softwareVersion": "16.0.16130.20218",
+      "recommendedSecurityUpdate": "Apply the Microsoft Office security update for CVE-2023-36884",
+      "exploitabilityLevel": "ExploitIsInKit"
+    },
+    {
+      "deviceName": "pc-eng-12.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2024-30078",
+      "vulnerabilitySeverityLevel": "High",
+      "cvssScore": 8.8,
+      "softwareVendor": "microsoft",
+      "softwareName": "windows_wifi_driver",
+      "softwareVersion": "10.0.22631.3737",
+      "recommendedSecurityUpdate": "Apply the June 2024 cumulative update",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "pc-eng-12.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2023-4863",
+      "vulnerabilitySeverityLevel": "Critical",
+      "cvssScore": 8.8,
+      "softwareVendor": "google",
+      "softwareName": "chrome",
+      "softwareVersion": "116.0.5845.110",
+      "recommendedSecurityUpdate": "Update Google Chrome to 116.0.5845.187 or later",
+      "exploitabilityLevel": "ExploitIsPublic"
+    },
+    {
+      "deviceName": "pc-eng-12.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2022-3786",
+      "vulnerabilitySeverityLevel": "Medium",
+      "cvssScore": 6.5,
+      "softwareVendor": "openssl",
+      "softwareName": "openssl",
+      "softwareVersion": "3.0.6",
+      "recommendedSecurityUpdate": "Upgrade OpenSSL to 3.0.7 or later",
+      "exploitabilityLevel": "NoExploit"
+    },
+    {
+      "deviceName": "pc-eng-12.corp.contoso.com",
+      "osPlatform": "Windows11",
+      "cveId": "CVE-2021-40444",
+      "vulnerabilitySeverityLevel": "Low",
+      "cvssScore": 3.1,
+      "softwareVendor": "microsoft",
+      "softwareName": "mshtml",
+      "softwareVersion": "11.0.22000.100",
+      "recommendedSecurityUpdate": "Apply the September 2021 cumulative update",
+      "exploitabilityLevel": "NoExploit"
+    }
+  ]
+}

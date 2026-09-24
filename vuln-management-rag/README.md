@@ -78,12 +78,73 @@ vulnrag/
   vectorstore.py    Qdrant wrapper (in-memory or server), idempotent upsert
   ingest.py         Tenable CSV parser (+ column aliases) & policy chunker
   llm.py            forced tool-use client + FakeLLMClient + citation guard
+  export.py         build findings.json (aggregates + SLA) for the dashboard
+  connectors/       Azure connectors (Defender/MDVM) -> Vulnerability
   agents/           LangGraph nodes, state, and graph assembly
 app.py              Chainlit frontend (auto-ingests sample data on first run)
 ingest_cli.py       ingest Tenable exports / policy dirs into Qdrant
-data/               sample Tenable export + sample policies
-tests/              25 tests, all offline (in-memory store + fake LLM)
+scan_cli.py         scan Azure endpoints via Defender, ingest, build dashboard data
+dashboard/          self-contained HTML dashboard + findings.json
+data/               sample Tenable export, policies, and Defender findings
+tests/              36 tests, all offline (in-memory store + fake LLM/connector)
 ```
+
+## Scanning an Azure environment (Defender / MDVM) and a dashboard
+
+The bot answers questions about `Vulnerability` records regardless of where they
+came from. To feed it live Azure data instead of a Tenable CSV, use the
+**Defender Vulnerability Management** connector: it pulls per-device findings
+from Microsoft Defender for Endpoint and maps them into the same schema, so the
+whole embed → Qdrant → agent pipeline works unchanged.
+
+```
+ Azure endpoints           connectors/defender.py         existing RAG pipeline
+ (2 servers +   ── MDVM ──► pull findings ──► map to  ──► Qdrant ──► LangGraph
+  2 Win11 PCs)              (MDE API)         Vulnerability            agents
+                                   │
+                                   └── export.py ──► dashboard/findings.json ──► dashboard/index.html
+```
+
+### One command, offline
+
+```bash
+python scan_cli.py --sample
+# open dashboard/index.html
+```
+
+This uses the bundled sample findings for two servers (`srv-web-01`,
+`srv-sql-01`) and two Windows 11 PCs (`pc-hr-07`, `pc-eng-12`), ingests them into
+Qdrant, and writes `dashboard/findings.json`. No Azure tenant required.
+
+### Against a real Azure tenant
+
+1. **Onboard the four endpoints to Microsoft Defender for Endpoint** and enable
+   Defender Vulnerability Management:
+   - servers → enable **Defender for Servers** in Defender for Cloud (via Azure
+     Arc if they aren't native Azure VMs);
+   - Windows 11 PCs → onboard via **Intune** (or a local onboarding script).
+2. **Create an Entra ID app registration** (service principal) with the
+   Defender for Endpoint *application* permissions `Vulnerability.Read.All` and
+   `Machine.Read.All`, and grant admin consent.
+3. **Set credentials** (`AZURE_TENANT_ID`, `AZURE_CLIENT_ID`,
+   `AZURE_CLIENT_SECRET` — use Key Vault in production) and run:
+   ```bash
+   pip install requests           # or: pip install -e ".[azure]"
+   python scan_cli.py --devices srv-web-01 srv-sql-01 pc-hr-07 pc-eng-12
+   ```
+   The connector authenticates (OAuth2 client credentials), pulls
+   `SoftwareVulnerabilitiesByMachine`, filters to those devices, ingests them,
+   and regenerates the dashboard data.
+
+### The dashboard
+
+`dashboard/index.html` is a **self-contained** page (no build step, no server):
+KPI tiles, a severity breakdown, per-host risk stacked by severity, and a
+filterable/searchable findings table with per-finding remediation and NVD links.
+It reads `dashboard/findings.json` when served, and falls back to an embedded
+sample so it renders even opened directly from disk. It is theme-aware
+(light/dark) and works down to phone width. Host it anywhere static (including
+GitHub Pages) or just open the file.
 
 ## Quickstart
 
