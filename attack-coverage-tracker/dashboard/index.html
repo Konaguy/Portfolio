@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATT&CK Coverage Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --page:#f5f7fa; --surface:#ffffff; --surface-2:#eef1f6; --surface-3:#e4e9f1;
+    --ink:#101725; --ink-2:#57616f; --ink-3:#868f9d;
+    --border:#e2e6ec; --border-2:#d3d9e2; --accent:#2a78d6; --accent-ink:#ffffff;
+    --good:#1e874b; --warn:#b6820a;
+    --shadow:0 1px 2px rgba(16,23,37,.06),0 6px 20px rgba(16,23,37,.05);
+    --radius:12px;
+    --f-display:"Archivo",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#0f1218; --surface:#171b22; --surface-2:#1f242d; --surface-3:#262d38;
+    --ink:#eef1f5; --ink-2:#a4adba; --ink-3:#79828f;
+    --border:#262c36; --border-2:#333b47; --accent:#4a90e6; --accent-ink:#0f1218;
+    --good:#43b877; --warn:#d8a52a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --page:#0f1218; --surface:#171b22; --surface-2:#1f242d; --surface-3:#262d38;
+    --ink:#eef1f5; --ink-2:#a4adba; --ink-3:#79828f;
+    --border:#262c36; --border-2:#333b47; --accent:#4a90e6; --accent-ink:#0f1218;
+    --good:#43b877; --warn:#d8a52a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:var(--page);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:28px 56px;}
+  h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;}
+  .mono{font-family:var(--f-mono);}
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px 24px;justify-content:space-between;margin-bottom:24px;}
+  .brand h1{font-size:24px;letter-spacing:-.01em;}
+  .brand .sub{color:var(--ink-2);font-size:13.5px;margin-top:4px;}
+  .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:5px 10px;border-radius:999px;border:1px solid var(--border-2);color:var(--ink-2);background:var(--surface);}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+  .pill.demo{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,var(--border-2));}
+  .pill.demo .dot{background:var(--warn);}
+  button.toggle{font:inherit;font-size:12px;cursor:pointer;padding:5px 12px;border-radius:999px;border:1px solid var(--border-2);background:var(--surface);color:var(--ink-2);}
+  button.toggle:hover{border-color:var(--accent);color:var(--ink);}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+  .kpi .label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;}
+  .kpi .value{font-family:var(--f-display);font-size:30px;line-height:1.1;margin-top:8px;font-variant-numeric:tabular-nums;}
+  .kpi .foot{font-size:12px;color:var(--ink-2);margin-top:4px;}
+
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:22px;}
+  .panel h2{font-size:15px;}
+  .panel .cap{color:var(--ink-2);font-size:12.5px;margin:2px 0 16px;}
+  .panelhead{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
+  .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);flex-wrap:wrap;}
+  .legend .cells{display:inline-flex;gap:3px;}
+  .legend .lc{width:16px;height:12px;border-radius:3px;border:1px solid var(--border-2);}
+
+  /* Matrix */
+  .matrixscroll{overflow-x:auto;padding-bottom:6px;}
+  .matrix{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:10px;min-width:1050px;}
+  .col{display:flex;flex-direction:column;gap:6px;}
+  .colhead{position:sticky;top:0;}
+  .colhead .tname{font-family:var(--f-display);font-size:12.5px;line-height:1.2;min-height:30px;}
+  .colhead .tmeta{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-top:2px;}
+  .colhead .tbar{height:4px;border-radius:2px;background:var(--surface-3);margin-top:6px;overflow:hidden;}
+  .colhead .tbar>span{display:block;height:100%;background:var(--accent);}
+  .cell{border:1px solid var(--border);border-radius:8px;padding:7px 8px;background:var(--surface-2);min-height:46px;display:flex;flex-direction:column;justify-content:center;gap:2px;}
+  .cell.uncovered{border-style:dashed;border-color:var(--border-2);opacity:.62;}
+  .cell .tid{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.02em;}
+  .cell .tt{font-size:11.5px;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .cell .cnt{align-self:flex-start;font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-variant-numeric:tabular-nums;}
+  .cell.hide{display:none;}
+
+  /* Coverage-by-tactic bars */
+  .barrow{display:grid;grid-template-columns:150px 1fr 78px;align-items:center;gap:10px;margin-bottom:9px;}
+  .barrow .bn{font-size:13px;}
+  .barrow .bt{height:16px;background:var(--surface-3);border-radius:6px;overflow:hidden;}
+  .barrow .bf{height:100%;background:var(--accent);border-radius:6px;min-width:2px;}
+  .barrow .bx{text-align:right;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;}
+
+  table{border-collapse:collapse;width:100%;min-width:640px;}
+  thead th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-weight:600;padding:11px 12px;border-bottom:1px solid var(--border);background:var(--surface-2);}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:top;}
+  tbody tr:last-child td{border-bottom:0;}
+  .srcbadge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--surface-3);color:var(--ink-2);}
+  .techchip{display:inline-block;font-family:var(--f-mono);font-size:11px;padding:1px 6px;border-radius:5px;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--ink);margin:2px 3px 0 0;}
+  .scroll{overflow-x:auto;}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;}
+  .controls label{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-2);cursor:pointer;}
+  footer.foot{margin-top:22px;color:var(--ink-3);font-size:12px;text-align:center;}
+  footer.foot code{font-family:var(--f-mono);}
+  @media (max-width:820px){.kpis{grid-template-columns:repeat(2,1fr);}.barrow{grid-template-columns:120px 1fr 70px;}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>ATT&CK Coverage Tracker</h1>
+      <div class="sub">Detection coverage mapped to MITRE ATT&CK, generated from the portfolio's Defender, Sentinel, and Sigma detections.</div>
+    </div>
+    <div class="meta">
+      <span class="pill" id="genPill">—</span>
+      <span class="pill demo" id="demoPill" hidden><span class="dot"></span> Embedded snapshot</span>
+      <button class="toggle" id="themeBtn" type="button">◐ Theme</button>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="panel">
+    <div class="panelhead">
+      <div><h2>Coverage matrix</h2><p class="cap" style="margin:2px 0 0">Techniques by tactic. Filled cells are covered; darker = more detections. Dashed = gap.</p></div>
+      <div class="legend">
+        <span>Detections</span>
+        <span class="cells" id="legendCells"></span>
+        <span class="lc" style="background:var(--surface-2);border-style:dashed" title="gap"></span> gap
+      </div>
+    </div>
+    <div class="controls">
+      <label><input type="checkbox" id="onlyCovered"> Show covered only</label>
+      <label>Highlight: <input type="search" id="search" placeholder="technique id or name" style="font:inherit;font-size:13px;padding:5px 9px;border-radius:8px;border:1px solid var(--border-2);background:var(--surface);color:var(--ink)"></label>
+    </div>
+    <div class="matrixscroll"><div class="matrix" id="matrix"></div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Coverage by tactic</h2>
+    <p class="cap">Covered techniques as a share of the catalog for each tactic.</p>
+    <div id="tacticBars"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Detections</h2>
+    <p class="cap">Every detection parsed, and the ATT&CK techniques it addresses.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th style="width:44%">Detection</th><th style="width:16%">Source</th><th>Techniques</th></tr></thead>
+        <tbody id="detBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    Generated by <code>attack-coverage-tracker</code> · matrix uses a bundled ATT&CK catalog snapshot · import <code>navigator-layer.json</code> into the MITRE ATT&CK Navigator for the full matrix view.
+  </footer>
+</div>
+
+<script>
+const DEFAULT_COVERAGE = {"generated_at":"2026-09-26T18:16:41.563626+00:00","layer_name":"Portfolio detection coverage","summary":{"detections_parsed":31,"techniques_covered":18,"techniques_total":101,"coverage_pct":26.7,"tactics_total":14,"tactics_with_coverage":9,"sources":{"defender":15,"sentinel":15,"sigma":1},"unknown_technique_ids":[],"max_detections_on_a_technique":4},"tactics":[{"shortname":"reconnaissance","attack_id":"TA0043","name":"Reconnaissance","covered":0,"total":5,"coverage_pct":0.0,"techniques":[{"id":"T1589","name":"Gather Victim Identity Information","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1590","name":"Gather Victim Network Information","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1592","name":"Gather Victim Host Information","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1595","name":"Active Scanning","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1598","name":"Phishing for Information","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"resource-development","attack_id":"TA0042","name":"Resource Development","covered":0,"total":4,"coverage_pct":0.0,"techniques":[{"id":"T1583","name":"Acquire Infrastructure","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1587","name":"Develop Capabilities","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1588","name":"Obtain Capabilities","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1608","name":"Stage Capabilities","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"initial-access","attack_id":"TA0001","name":"Initial Access","covered":2,"total":7,"coverage_pct":28.6,"techniques":[{"id":"T1078","name":"Valid Accounts","covered":true,"detection_count":2,"detections":["CD-11: Impossible Travel Logon","Impossible Travel Logon"],"covered_subtechniques":[]},{"id":"T1133","name":"External Remote Services","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1189","name":"Drive-by Compromise","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1190","name":"Exploit Public-Facing Application","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1195","name":"Supply Chain Compromise","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1199","name":"Trusted Relationship","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1566","name":"Phishing","covered":true,"detection_count":4,"detections":["CD-05: Office App Spawning Script Interpreter","CD-15: Phishing Email with Lookalike Domain and Urgency Language","Office Application Spawning Script Interpreter","Phishing Email with Lookalike Domain and Urgency Language"],"covered_subtechniques":[{"id":"T1566.001","name":"Spearphishing Attachment","count":2},{"id":"T1566.002","name":"Spearphishing Link","count":2}]}]},{"shortname":"execution","attack_id":"TA0002","name":"Execution","covered":3,"total":8,"coverage_pct":37.5,"techniques":[{"id":"T1047","name":"Windows Management Instrumentation","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1053","name":"Scheduled Task/Job","covered":true,"detection_count":2,"detections":["CD-04: Scheduled Task or Service Created for Persistence","Scheduled Task or Service Created for Persistence"],"covered_subtechniques":[{"id":"T1053.005","name":"Scheduled Task","count":2}]},{"id":"T1059","name":"Command and Scripting Interpreter","covered":true,"detection_count":3,"detections":["CD-02: Encoded or Obfuscated PowerShell Execution","Encoded PowerShell Execution","Encoded or Obfuscated PowerShell Execution"],"covered_subtechniques":[{"id":"T1059.001","name":"PowerShell","count":3}]},{"id":"T1106","name":"Native API","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1129","name":"Shared Modules","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1203","name":"Exploitation for Client Execution","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1204","name":"User Execution","covered":true,"detection_count":2,"detections":["CD-05: Office App Spawning Script Interpreter","Office Application Spawning Script Interpreter"],"covered_subtechniques":[{"id":"T1204.002","name":"Malicious File","count":2}]},{"id":"T1569","name":"System Services","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"persistence","attack_id":"TA0003","name":"Persistence","covered":5,"total":11,"coverage_pct":45.5,"techniques":[{"id":"T1053","name":"Scheduled Task/Job","covered":true,"detection_count":2,"detections":["CD-04: Scheduled Task or Service Created for Persistence","Scheduled Task or Service Created for Persistence"],"covered_subtechniques":[{"id":"T1053.005","name":"Scheduled Task","count":2}]},{"id":"T1078","name":"Valid Accounts","covered":true,"detection_count":2,"detections":["CD-11: Impossible Travel Logon","Impossible Travel Logon"],"covered_subtechniques":[]},{"id":"T1098","name":"Account Manipulation","covered":true,"detection_count":2,"detections":["Account Added to Sensitive Security Group","CD-13: Account Added to Sensitive Security Group"],"covered_subtechniques":[]},{"id":"T1133","name":"External Remote Services","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1136","name":"Create Account","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1197","name":"BITS Jobs","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1505","name":"Server Software Component","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1543","name":"Create or Modify System Process","covered":true,"detection_count":2,"detections":["CD-04: Scheduled Task or Service Created for Persistence","Scheduled Task or Service Created for Persistence"],"covered_subtechniques":[{"id":"T1543.003","name":"T1543.003","count":2}]},{"id":"T1546","name":"Event Triggered Execution","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1547","name":"Boot or Logon Autostart Execution","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1556","name":"Modify Authentication Process","covered":true,"detection_count":2,"detections":["CD-14: New MFA Method Registered Then Immediate Risky Sign-in","New MFA Method Registered Then Immediate Risky Sign-in"],"covered_subtechniques":[{"id":"T1556.006","name":"T1556.006","count":2}]}]},{"shortname":"privilege-escalation","attack_id":"TA0004","name":"Privilege Escalation","covered":4,"total":9,"coverage_pct":44.4,"techniques":[{"id":"T1053","name":"Scheduled Task/Job","covered":true,"detection_count":2,"detections":["CD-04: Scheduled Task or Service Created for Persistence","Scheduled Task or Service Created for Persistence"],"covered_subtechniques":[{"id":"T1053.005","name":"Scheduled Task","count":2}]},{"id":"T1055","name":"Process Injection","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1068","name":"Exploitation for Privilege Escalation","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1078","name":"Valid Accounts","covered":true,"detection_count":2,"detections":["CD-11: Impossible Travel Logon","Impossible Travel Logon"],"covered_subtechniques":[]},{"id":"T1098","name":"Account Manipulation","covered":true,"detection_count":2,"detections":["Account Added to Sensitive Security Group","CD-13: Account Added to Sensitive Security Group"],"covered_subtechniques":[]},{"id":"T1543","name":"Create or Modify System Process","covered":true,"detection_count":2,"detections":["CD-04: Scheduled Task or Service Created for Persistence","Scheduled Task or Service Created for Persistence"],"covered_subtechniques":[{"id":"T1543.003","name":"T1543.003","count":2}]},{"id":"T1546","name":"Event Triggered Execution","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1547","name":"Boot or Logon Autostart Execution","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1548","name":"Abuse Elevation Control Mechanism","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"defense-evasion","attack_id":"TA0005","name":"Defense Evasion","covered":6,"total":14,"coverage_pct":42.9,"techniques":[{"id":"T1027","name":"Obfuscated Files or Information","covered":true,"detection_count":3,"detections":["CD-02: Encoded or Obfuscated PowerShell Execution","Encoded PowerShell Execution","Encoded or Obfuscated PowerShell Execution"],"covered_subtechniques":[]},{"id":"T1036","name":"Masquerading","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1055","name":"Process Injection","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1070","name":"Indicator Removal","covered":true,"detection_count":2,"detections":["CD-07: Security Tooling or Logging Disabled","Security Tooling or Logging Disabled"],"covered_subtechniques":[{"id":"T1070.001","name":"T1070.001","count":2}]},{"id":"T1078","name":"Valid Accounts","covered":true,"detection_count":2,"detections":["CD-11: Impossible Travel Logon","Impossible Travel Logon"],"covered_subtechniques":[]},{"id":"T1112","name":"Modify Registry","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1140","name":"Deobfuscate/Decode Files or Information","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1197","name":"BITS Jobs","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1218","name":"System Binary Proxy Execution","covered":true,"detection_count":2,"detections":["CD-03: LOLBin Spawning External Network Connection","LOLBin Spawning External Network Connection"],"covered_subtechniques":[]},{"id":"T1497","name":"Virtualization/Sandbox Evasion","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1548","name":"Abuse Elevation Control Mechanism","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1550","name":"Use Alternate Authentication Material","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1556","name":"Modify Authentication Process","covered":true,"detection_count":2,"detections":["CD-14: New MFA Method Registered Then Immediate Risky Sign-in","New MFA Method Registered Then Immediate Risky Sign-in"],"covered_subtechniques":[{"id":"T1556.006","name":"T1556.006","count":2}]},{"id":"T1562","name":"Impair Defenses","covered":true,"detection_count":2,"detections":["CD-07: Security Tooling or Logging Disabled","Security Tooling or Logging Disabled"],"covered_subtechniques":[{"id":"T1562.001","name":"Disable or Modify Tools","count":2}]}]},{"shortname":"credential-access","attack_id":"TA0006","name":"Credential Access","covered":3,"total":8,"coverage_pct":37.5,"techniques":[{"id":"T1003","name":"OS Credential Dumping","covered":true,"detection_count":2,"detections":["CD-01: LSASS Credential Dumping Attempt","LSASS Credential Dumping Attempt"],"covered_subtechniques":[{"id":"T1003.001","name":"LSASS Memory","count":2}]},{"id":"T1056","name":"Input Capture","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1110","name":"Brute Force","covered":true,"detection_count":2,"detections":["CD-12: Password Spray Pattern","Password Spray Pattern"],"covered_subtechniques":[{"id":"T1110.003","name":"Password Spraying","count":2}]},{"id":"T1187","name":"Forced Authentication","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1552","name":"Unsecured Credentials","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1555","name":"Credentials from Password Stores","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1556","name":"Modify Authentication Process","covered":true,"detection_count":2,"detections":["CD-14: New MFA Method Registered Then Immediate Risky Sign-in","New MFA Method Registered Then Immediate Risky Sign-in"],"covered_subtechniques":[{"id":"T1556.006","name":"T1556.006","count":2}]},{"id":"T1558","name":"Steal or Forge Kerberos Tickets","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"discovery","attack_id":"TA0007","name":"Discovery","covered":0,"total":9,"coverage_pct":0.0,"techniques":[{"id":"T1016","name":"System Network Configuration Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1018","name":"Remote System Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1046","name":"Network Service Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1057","name":"Process Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1069","name":"Permission Groups Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1082","name":"System Information Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1083","name":"File and Directory Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1087","name":"Account Discovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1497","name":"Virtualization/Sandbox Evasion","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"lateral-movement","attack_id":"TA0008","name":"Lateral Movement","covered":0,"total":4,"coverage_pct":0.0,"techniques":[{"id":"T1021","name":"Remote Services","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1080","name":"Taint Shared Content","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1550","name":"Use Alternate Authentication Material","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1570","name":"Lateral Tool Transfer","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"collection","attack_id":"TA0009","name":"Collection","covered":1,"total":5,"coverage_pct":20.0,"techniques":[{"id":"T1005","name":"Data from Local System","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1056","name":"Input Capture","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1113","name":"Screen Capture","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1114","name":"Email Collection","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1560","name":"Archive Collected Data","covered":true,"detection_count":2,"detections":["Archive Utility Staging Sensitive Data","CD-08: Archive Utility Staging Sensitive Data"],"covered_subtechniques":[{"id":"T1560.001","name":"T1560.001","count":2}]}]},{"shortname":"command-and-control","attack_id":"TA0011","name":"Command and Control","covered":2,"total":7,"coverage_pct":28.6,"techniques":[{"id":"T1071","name":"Application Layer Protocol","covered":true,"detection_count":4,"detections":["CD-09: Network Beaconing to Public IP","CD-10: Rare External Domain Contacted by Scripting Engine","Network Beaconing to Public IP","Rare External Domain Contacted by Scripting Engine"],"covered_subtechniques":[{"id":"T1071.001","name":"Web Protocols","count":2}]},{"id":"T1090","name":"Proxy","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1105","name":"Ingress Tool Transfer","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1219","name":"Remote Access Software","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1568","name":"Dynamic Resolution","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1571","name":"Non-Standard Port","covered":true,"detection_count":2,"detections":["CD-09: Network Beaconing to Public IP","Network Beaconing to Public IP"],"covered_subtechniques":[]},{"id":"T1573","name":"Encrypted Channel","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"exfiltration","attack_id":"TA0010","name":"Exfiltration","covered":0,"total":4,"coverage_pct":0.0,"techniques":[{"id":"T1030","name":"Data Transfer Size Limits","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1041","name":"Exfiltration Over C2 Channel","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1048","name":"Exfiltration Over Alternative Protocol","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1567","name":"Exfiltration Over Web Service","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]},{"shortname":"impact","attack_id":"TA0040","name":"Impact","covered":1,"total":6,"coverage_pct":16.7,"techniques":[{"id":"T1485","name":"Data Destruction","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1486","name":"Data Encrypted for Impact","covered":true,"detection_count":2,"detections":["CD-06: Mass File Rename to Ransomware Extension","Mass File Rename to Ransomware Extension"],"covered_subtechniques":[]},{"id":"T1489","name":"Service Stop","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1490","name":"Inhibit System Recovery","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1491","name":"Defacement","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]},{"id":"T1498","name":"Network Denial of Service","covered":false,"detection_count":0,"detections":[],"covered_subtechniques":[]}]}],"detections":[{"name":"CD-01: LSASS Credential Dumping Attempt","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1003.001","name":"LSASS Memory","known":true}]},{"name":"CD-02: Encoded or Obfuscated PowerShell Execution","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1059.001","name":"PowerShell","known":true},{"id":"T1027","name":"Obfuscated Files or Information","known":true}]},{"name":"CD-03: LOLBin Spawning External Network Connection","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1218","name":"System Binary Proxy Execution","known":true}]},{"name":"CD-04: Scheduled Task or Service Created for Persistence","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1053.005","name":"Scheduled Task","known":true},{"id":"T1543.003","name":"T1543.003","known":true}]},{"name":"CD-05: Office App Spawning Script Interpreter","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1204.002","name":"Malicious File","known":true},{"id":"T1566.001","name":"Spearphishing Attachment","known":true}]},{"name":"CD-06: Mass File Rename to Ransomware Extension","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1486","name":"Data Encrypted for Impact","known":true}]},{"name":"CD-07: Security Tooling or Logging Disabled","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1562.001","name":"Disable or Modify Tools","known":true},{"id":"T1070.001","name":"T1070.001","known":true}]},{"name":"CD-08: Archive Utility Staging Sensitive Data","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1560.001","name":"T1560.001","known":true}]},{"name":"CD-09: Network Beaconing to Public IP","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1071","name":"Application Layer Protocol","known":true},{"id":"T1571","name":"Non-Standard Port","known":true}]},{"name":"CD-10: Rare External Domain Contacted by Scripting Engine","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1071.001","name":"Web Protocols","known":true}]},{"name":"CD-11: Impossible Travel Logon","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1078","name":"Valid Accounts","known":true}]},{"name":"CD-12: Password Spray Pattern","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1110.003","name":"Password Spraying","known":true}]},{"name":"CD-13: Account Added to Sensitive Security Group","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1098","name":"Account Manipulation","known":true}]},{"name":"CD-14: New MFA Method Registered Then Immediate Risky Sign-in","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1556.006","name":"T1556.006","known":true}]},{"name":"CD-15: Phishing Email with Lookalike Domain and Urgency Language","source":"defender","platform":"Microsoft Defender XDR","techniques":[{"id":"T1566.002","name":"Spearphishing Link","known":true}]},{"name":"LSASS Credential Dumping Attempt","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1003.001","name":"LSASS Memory","known":true}]},{"name":"Encoded or Obfuscated PowerShell Execution","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1059.001","name":"PowerShell","known":true},{"id":"T1027","name":"Obfuscated Files or Information","known":true}]},{"name":"LOLBin Spawning External Network Connection","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1218","name":"System Binary Proxy Execution","known":true}]},{"name":"Scheduled Task or Service Created for Persistence","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1053.005","name":"Scheduled Task","known":true},{"id":"T1543.003","name":"T1543.003","known":true}]},{"name":"Office Application Spawning Script Interpreter","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1204.002","name":"Malicious File","known":true},{"id":"T1566.001","name":"Spearphishing Attachment","known":true}]},{"name":"Mass File Rename to Ransomware Extension","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1486","name":"Data Encrypted for Impact","known":true}]},{"name":"Security Tooling or Logging Disabled","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1562.001","name":"Disable or Modify Tools","known":true},{"id":"T1070.001","name":"T1070.001","known":true}]},{"name":"Archive Utility Staging Sensitive Data","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1560.001","name":"T1560.001","known":true}]},{"name":"Network Beaconing to Public IP","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1071","name":"Application Layer Protocol","known":true},{"id":"T1571","name":"Non-Standard Port","known":true}]},{"name":"Rare External Domain Contacted by Scripting Engine","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1071.001","name":"Web Protocols","known":true}]},{"name":"Impossible Travel Logon","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1078","name":"Valid Accounts","known":true}]},{"name":"Password Spray Pattern","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1110.003","name":"Password Spraying","known":true}]},{"name":"Account Added to Sensitive Security Group","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1098","name":"Account Manipulation","known":true}]},{"name":"New MFA Method Registered Then Immediate Risky Sign-in","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1556.006","name":"T1556.006","known":true}]},{"name":"Phishing Email with Lookalike Domain and Urgency Language","source":"sentinel","platform":"Microsoft Sentinel","techniques":[{"id":"T1566.002","name":"Spearphishing Link","known":true}]},{"name":"Encoded PowerShell Execution","source":"sigma","platform":"Sigma","techniques":[{"id":"T1059.001","name":"PowerShell","known":true},{"id":"T1027","name":"Obfuscated Files or Information","known":true}]}]};
+
+let DATA = null;
+const state = { onlyCovered:false, q:"" };
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function tint(count){ // sequential: more detections => stronger accent tint
+  if(!count) return "var(--surface-2)";
+  const pct = Math.min(85, 22 + count*22);
+  return `color-mix(in srgb, var(--accent) ${pct}%, var(--surface))`;
+}
+
+function renderKpis(){
+  const s=DATA.summary;
+  const tiles=[
+    {label:"Detections parsed",value:s.detections_parsed,foot:Object.entries(s.sources).map(([k,v])=>`${v} ${k}`).join(" · ")},
+    {label:"Techniques covered",value:s.techniques_covered,foot:`of ${s.techniques_total} in catalog`},
+    {label:"Tactics with coverage",value:`${s.tactics_with_coverage}/${s.tactics_total}`,foot:"ATT&CK enterprise tactics"},
+    {label:"Catalog coverage",value:s.coverage_pct+"%",foot:"covered ÷ catalog techniques"},
+  ];
+  document.getElementById("kpis").innerHTML=tiles.map(t=>`
+    <div class="kpi"><div class="label">${t.label}</div><div class="value">${t.value}</div><div class="foot">${esc(t.foot)}</div></div>`).join("");
+}
+
+function renderLegend(){
+  const cells=[1,2,3,4].map(n=>`<span class="lc" style="background:${tint(n)}" title="${n}${n===4?"+":""} detections"></span>`).join("");
+  document.getElementById("legendCells").innerHTML=cells;
+}
+
+function matchQ(t){
+  if(!state.q) return false;
+  const q=state.q.toLowerCase();
+  return t.id.toLowerCase().includes(q)||t.name.toLowerCase().includes(q);
+}
+
+function renderMatrix(){
+  const m=document.getElementById("matrix");
+  m.innerHTML=DATA.tactics.map(tac=>{
+    const cells=tac.techniques.map(t=>{
+      const hidden=state.onlyCovered&&!t.covered;
+      const hl=matchQ(t);
+      const subs=t.covered_subtechniques&&t.covered_subtechniques.length
+        ? " ("+t.covered_subtechniques.map(s=>s.id).join(", ")+")" : "";
+      const title=`${t.id} ${t.name}${t.covered?` — ${t.detection_count} detection(s)`:" — no detection"}${subs}`;
+      const style=`background:${t.covered?tint(t.detection_count):""}` + (hl?";outline:2px solid var(--warn);outline-offset:1px":"");
+      return `<div class="cell ${t.covered?"":"uncovered"} ${hidden?"hide":""}" style="${style}" title="${esc(title)}">
+        <span class="tid">${t.id}</span>
+        <span class="tt">${esc(t.name)}</span>
+        ${t.covered?`<span class="cnt">${t.detection_count}</span>`:""}
+      </div>`;
+    }).join("");
+    const pct=tac.total?Math.round(100*tac.covered/tac.total):0;
+    return `<div class="col">
+      <div class="colhead">
+        <div class="tname">${esc(tac.name)}</div>
+        <div class="tmeta">${tac.covered}/${tac.total} covered</div>
+        <div class="tbar"><span style="width:${pct}%"></span></div>
+      </div>
+      ${cells}
+    </div>`;
+  }).join("");
+}
+
+function renderTacticBars(){
+  const max=Math.max(1,...DATA.tactics.map(t=>t.total));
+  document.getElementById("tacticBars").innerHTML=DATA.tactics.map(t=>{
+    const w=(t.total/max)*100, cov=t.total?(t.covered/t.total)*w:0;
+    return `<div class="barrow">
+      <span class="bn">${esc(t.name)}</span>
+      <span class="bt" title="${t.covered} of ${t.total} techniques"><span class="bf" style="width:${cov}%"></span></span>
+      <span class="bx">${t.covered}/${t.total}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderDetections(){
+  const rows=DATA.detections.map(d=>{
+    const chips=d.techniques.map(t=>`<span class="techchip" title="${esc(t.name)}">${esc(t.id)}</span>`).join("");
+    return `<tr><td>${esc(d.name)}</td><td><span class="srcbadge">${esc(d.platform)}</span></td><td>${chips||"—"}</td></tr>`;
+  }).join("");
+  document.getElementById("detBody").innerHTML=rows;
+}
+
+function renderMeta(){
+  let when=DATA.generated_at;
+  try{when=new Date(DATA.generated_at).toLocaleString(undefined,{dateStyle:"medium",timeStyle:"short"});}catch(e){}
+  document.getElementById("genPill").textContent="Generated "+when;
+}
+
+function boot(data,isSnapshot){
+  DATA=data;
+  document.getElementById("demoPill").hidden=!isSnapshot;
+  renderMeta();renderKpis();renderLegend();renderMatrix();renderTacticBars();renderDetections();
+}
+
+(function(){
+  const root=document.documentElement; let saved=null;
+  try{saved=localStorage.getItem("attackcov-theme");}catch(e){}
+  if(saved)root.setAttribute("data-theme",saved);
+  document.getElementById("themeBtn").addEventListener("click",()=>{
+    const cur=root.getAttribute("data-theme");
+    const isDark=cur?cur==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+    const next=isDark?"light":"dark"; root.setAttribute("data-theme",next);
+    try{localStorage.setItem("attackcov-theme",next);}catch(e){}
+  });
+})();
+document.getElementById("onlyCovered").addEventListener("change",e=>{state.onlyCovered=e.target.checked;renderMatrix();});
+document.getElementById("search").addEventListener("input",e=>{state.q=e.target.value;renderMatrix();});
+
+fetch("coverage.json",{cache:"no-store"})
+  .then(r=>{if(!r.ok)throw new Error("no file");return r.json();})
+  .then(d=>boot(d,false))
+  .catch(()=>boot(DEFAULT_COVERAGE,true));
+</script>
+</body>
+</html>

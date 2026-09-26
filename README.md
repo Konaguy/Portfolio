@@ -19,8 +19,9 @@ detection languages), not as a buzzword.
 | [`sigma-rule-translator/`](./sigma-rule-translator) | A CLI tool that translates vendor-agnostic Sigma detection rules into Microsoft Sentinel KQL and CrowdStrike Falcon query syntax, so detection logic isn't locked to one platform. |
 | [`crowdstrike-rtr-toolkit/`](./crowdstrike-rtr-toolkit) | A tested, packaged Python library wrapping the CrowdStrike Falcon Real Time Response API for common incident response actions (containment, process kill, evidence collection). |
 | [`llm-soc-copilot/`](./llm-soc-copilot) | An LLM-powered alert triage assistant: RAG-grounded enrichment over closed cases, schema-validated structured output via forced tool-use, a hallucinated-citation guard, and an eval harness scoring verdicts against labeled ground truth. |
+| [`attack-coverage-tracker/`](./attack-coverage-tracker) | Parses the repo's Defender/Sentinel/Sigma detections, maps them to MITRE ATT&CK, and reports coverage — an ATT&CK Navigator layer plus a self-contained heatmap dashboard showing what's covered and where the gaps are. |
 
-## Why these three
+## Why these projects
 
 - **SOAR architecture** shows I can design at the systems level — how alerts
   become cases, how response actions get gated by risk, how the audit trail
@@ -34,6 +35,9 @@ detection languages), not as a buzzword.
   matter in a security context — forced structured output, a hallucination
   check on RAG citations, and an eval harness rather than a demo that "seems
   to work."
+- **The ATT&CK coverage tracker** shows detection-program maturity — measuring
+  what the detections actually cover against the adversary playbook, gaps
+  included, instead of just adding more rules.
 
 ## Background
 

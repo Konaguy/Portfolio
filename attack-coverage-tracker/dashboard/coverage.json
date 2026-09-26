@@ -1,0 +1,1592 @@
+{
+  "generated_at": "2026-09-26T18:16:41.563626+00:00",
+  "layer_name": "Portfolio detection coverage",
+  "summary": {
+    "detections_parsed": 31,
+    "techniques_covered": 18,
+    "techniques_total": 101,
+    "coverage_pct": 26.7,
+    "tactics_total": 14,
+    "tactics_with_coverage": 9,
+    "sources": {
+      "defender": 15,
+      "sentinel": 15,
+      "sigma": 1
+    },
+    "unknown_technique_ids": [],
+    "max_detections_on_a_technique": 4
+  },
+  "tactics": [
+    {
+      "shortname": "reconnaissance",
+      "attack_id": "TA0043",
+      "name": "Reconnaissance",
+      "covered": 0,
+      "total": 5,
+      "coverage_pct": 0.0,
+      "techniques": [
+        {
+          "id": "T1589",
+          "name": "Gather Victim Identity Information",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1590",
+          "name": "Gather Victim Network Information",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1592",
+          "name": "Gather Victim Host Information",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1595",
+          "name": "Active Scanning",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1598",
+          "name": "Phishing for Information",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "resource-development",
+      "attack_id": "TA0042",
+      "name": "Resource Development",
+      "covered": 0,
+      "total": 4,
+      "coverage_pct": 0.0,
+      "techniques": [
+        {
+          "id": "T1583",
+          "name": "Acquire Infrastructure",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1587",
+          "name": "Develop Capabilities",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1588",
+          "name": "Obtain Capabilities",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1608",
+          "name": "Stage Capabilities",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "initial-access",
+      "attack_id": "TA0001",
+      "name": "Initial Access",
+      "covered": 2,
+      "total": 7,
+      "coverage_pct": 28.6,
+      "techniques": [
+        {
+          "id": "T1078",
+          "name": "Valid Accounts",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-11: Impossible Travel Logon",
+            "Impossible Travel Logon"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1133",
+          "name": "External Remote Services",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1189",
+          "name": "Drive-by Compromise",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1195",
+          "name": "Supply Chain Compromise",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1199",
+          "name": "Trusted Relationship",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1566",
+          "name": "Phishing",
+          "covered": true,
+          "detection_count": 4,
+          "detections": [
+            "CD-05: Office App Spawning Script Interpreter",
+            "CD-15: Phishing Email with Lookalike Domain and Urgency Language",
+            "Office Application Spawning Script Interpreter",
+            "Phishing Email with Lookalike Domain and Urgency Language"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1566.001",
+              "name": "Spearphishing Attachment",
+              "count": 2
+            },
+            {
+              "id": "T1566.002",
+              "name": "Spearphishing Link",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "shortname": "execution",
+      "attack_id": "TA0002",
+      "name": "Execution",
+      "covered": 3,
+      "total": 8,
+      "coverage_pct": 37.5,
+      "techniques": [
+        {
+          "id": "T1047",
+          "name": "Windows Management Instrumentation",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1053",
+          "name": "Scheduled Task/Job",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-04: Scheduled Task or Service Created for Persistence",
+            "Scheduled Task or Service Created for Persistence"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1053.005",
+              "name": "Scheduled Task",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1059",
+          "name": "Command and Scripting Interpreter",
+          "covered": true,
+          "detection_count": 3,
+          "detections": [
+            "CD-02: Encoded or Obfuscated PowerShell Execution",
+            "Encoded PowerShell Execution",
+            "Encoded or Obfuscated PowerShell Execution"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1059.001",
+              "name": "PowerShell",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "id": "T1106",
+          "name": "Native API",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1129",
+          "name": "Shared Modules",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1203",
+          "name": "Exploitation for Client Execution",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1204",
+          "name": "User Execution",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-05: Office App Spawning Script Interpreter",
+            "Office Application Spawning Script Interpreter"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1204.002",
+              "name": "Malicious File",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1569",
+          "name": "System Services",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "persistence",
+      "attack_id": "TA0003",
+      "name": "Persistence",
+      "covered": 5,
+      "total": 11,
+      "coverage_pct": 45.5,
+      "techniques": [
+        {
+          "id": "T1053",
+          "name": "Scheduled Task/Job",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-04: Scheduled Task or Service Created for Persistence",
+            "Scheduled Task or Service Created for Persistence"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1053.005",
+              "name": "Scheduled Task",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1078",
+          "name": "Valid Accounts",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-11: Impossible Travel Logon",
+            "Impossible Travel Logon"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1098",
+          "name": "Account Manipulation",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "Account Added to Sensitive Security Group",
+            "CD-13: Account Added to Sensitive Security Group"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1133",
+          "name": "External Remote Services",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1136",
+          "name": "Create Account",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1197",
+          "name": "BITS Jobs",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1505",
+          "name": "Server Software Component",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1543",
+          "name": "Create or Modify System Process",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-04: Scheduled Task or Service Created for Persistence",
+            "Scheduled Task or Service Created for Persistence"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1543.003",
+              "name": "T1543.003",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1546",
+          "name": "Event Triggered Execution",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1547",
+          "name": "Boot or Logon Autostart Execution",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1556",
+          "name": "Modify Authentication Process",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-14: New MFA Method Registered Then Immediate Risky Sign-in",
+            "New MFA Method Registered Then Immediate Risky Sign-in"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1556.006",
+              "name": "T1556.006",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "shortname": "privilege-escalation",
+      "attack_id": "TA0004",
+      "name": "Privilege Escalation",
+      "covered": 4,
+      "total": 9,
+      "coverage_pct": 44.4,
+      "techniques": [
+        {
+          "id": "T1053",
+          "name": "Scheduled Task/Job",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-04: Scheduled Task or Service Created for Persistence",
+            "Scheduled Task or Service Created for Persistence"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1053.005",
+              "name": "Scheduled Task",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1055",
+          "name": "Process Injection",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1068",
+          "name": "Exploitation for Privilege Escalation",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1078",
+          "name": "Valid Accounts",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-11: Impossible Travel Logon",
+            "Impossible Travel Logon"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1098",
+          "name": "Account Manipulation",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "Account Added to Sensitive Security Group",
+            "CD-13: Account Added to Sensitive Security Group"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1543",
+          "name": "Create or Modify System Process",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-04: Scheduled Task or Service Created for Persistence",
+            "Scheduled Task or Service Created for Persistence"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1543.003",
+              "name": "T1543.003",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1546",
+          "name": "Event Triggered Execution",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1547",
+          "name": "Boot or Logon Autostart Execution",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1548",
+          "name": "Abuse Elevation Control Mechanism",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "defense-evasion",
+      "attack_id": "TA0005",
+      "name": "Defense Evasion",
+      "covered": 6,
+      "total": 14,
+      "coverage_pct": 42.9,
+      "techniques": [
+        {
+          "id": "T1027",
+          "name": "Obfuscated Files or Information",
+          "covered": true,
+          "detection_count": 3,
+          "detections": [
+            "CD-02: Encoded or Obfuscated PowerShell Execution",
+            "Encoded PowerShell Execution",
+            "Encoded or Obfuscated PowerShell Execution"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1036",
+          "name": "Masquerading",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1055",
+          "name": "Process Injection",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1070",
+          "name": "Indicator Removal",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-07: Security Tooling or Logging Disabled",
+            "Security Tooling or Logging Disabled"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1070.001",
+              "name": "T1070.001",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1078",
+          "name": "Valid Accounts",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-11: Impossible Travel Logon",
+            "Impossible Travel Logon"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1112",
+          "name": "Modify Registry",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1140",
+          "name": "Deobfuscate/Decode Files or Information",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1197",
+          "name": "BITS Jobs",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1218",
+          "name": "System Binary Proxy Execution",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-03: LOLBin Spawning External Network Connection",
+            "LOLBin Spawning External Network Connection"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1497",
+          "name": "Virtualization/Sandbox Evasion",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1548",
+          "name": "Abuse Elevation Control Mechanism",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1550",
+          "name": "Use Alternate Authentication Material",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1556",
+          "name": "Modify Authentication Process",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-14: New MFA Method Registered Then Immediate Risky Sign-in",
+            "New MFA Method Registered Then Immediate Risky Sign-in"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1556.006",
+              "name": "T1556.006",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1562",
+          "name": "Impair Defenses",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-07: Security Tooling or Logging Disabled",
+            "Security Tooling or Logging Disabled"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1562.001",
+              "name": "Disable or Modify Tools",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "shortname": "credential-access",
+      "attack_id": "TA0006",
+      "name": "Credential Access",
+      "covered": 3,
+      "total": 8,
+      "coverage_pct": 37.5,
+      "techniques": [
+        {
+          "id": "T1003",
+          "name": "OS Credential Dumping",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-01: LSASS Credential Dumping Attempt",
+            "LSASS Credential Dumping Attempt"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1003.001",
+              "name": "LSASS Memory",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1056",
+          "name": "Input Capture",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1110",
+          "name": "Brute Force",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-12: Password Spray Pattern",
+            "Password Spray Pattern"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1110.003",
+              "name": "Password Spraying",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1187",
+          "name": "Forced Authentication",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1552",
+          "name": "Unsecured Credentials",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1555",
+          "name": "Credentials from Password Stores",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1556",
+          "name": "Modify Authentication Process",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-14: New MFA Method Registered Then Immediate Risky Sign-in",
+            "New MFA Method Registered Then Immediate Risky Sign-in"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1556.006",
+              "name": "T1556.006",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1558",
+          "name": "Steal or Forge Kerberos Tickets",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "discovery",
+      "attack_id": "TA0007",
+      "name": "Discovery",
+      "covered": 0,
+      "total": 9,
+      "coverage_pct": 0.0,
+      "techniques": [
+        {
+          "id": "T1016",
+          "name": "System Network Configuration Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1018",
+          "name": "Remote System Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1046",
+          "name": "Network Service Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1057",
+          "name": "Process Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1069",
+          "name": "Permission Groups Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1082",
+          "name": "System Information Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1083",
+          "name": "File and Directory Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1087",
+          "name": "Account Discovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1497",
+          "name": "Virtualization/Sandbox Evasion",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "lateral-movement",
+      "attack_id": "TA0008",
+      "name": "Lateral Movement",
+      "covered": 0,
+      "total": 4,
+      "coverage_pct": 0.0,
+      "techniques": [
+        {
+          "id": "T1021",
+          "name": "Remote Services",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1080",
+          "name": "Taint Shared Content",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1550",
+          "name": "Use Alternate Authentication Material",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1570",
+          "name": "Lateral Tool Transfer",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "collection",
+      "attack_id": "TA0009",
+      "name": "Collection",
+      "covered": 1,
+      "total": 5,
+      "coverage_pct": 20.0,
+      "techniques": [
+        {
+          "id": "T1005",
+          "name": "Data from Local System",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1056",
+          "name": "Input Capture",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1113",
+          "name": "Screen Capture",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1114",
+          "name": "Email Collection",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1560",
+          "name": "Archive Collected Data",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "Archive Utility Staging Sensitive Data",
+            "CD-08: Archive Utility Staging Sensitive Data"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1560.001",
+              "name": "T1560.001",
+              "count": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "shortname": "command-and-control",
+      "attack_id": "TA0011",
+      "name": "Command and Control",
+      "covered": 2,
+      "total": 7,
+      "coverage_pct": 28.6,
+      "techniques": [
+        {
+          "id": "T1071",
+          "name": "Application Layer Protocol",
+          "covered": true,
+          "detection_count": 4,
+          "detections": [
+            "CD-09: Network Beaconing to Public IP",
+            "CD-10: Rare External Domain Contacted by Scripting Engine",
+            "Network Beaconing to Public IP",
+            "Rare External Domain Contacted by Scripting Engine"
+          ],
+          "covered_subtechniques": [
+            {
+              "id": "T1071.001",
+              "name": "Web Protocols",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "id": "T1090",
+          "name": "Proxy",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1105",
+          "name": "Ingress Tool Transfer",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1219",
+          "name": "Remote Access Software",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1568",
+          "name": "Dynamic Resolution",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1571",
+          "name": "Non-Standard Port",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-09: Network Beaconing to Public IP",
+            "Network Beaconing to Public IP"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1573",
+          "name": "Encrypted Channel",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "exfiltration",
+      "attack_id": "TA0010",
+      "name": "Exfiltration",
+      "covered": 0,
+      "total": 4,
+      "coverage_pct": 0.0,
+      "techniques": [
+        {
+          "id": "T1030",
+          "name": "Data Transfer Size Limits",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1041",
+          "name": "Exfiltration Over C2 Channel",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1048",
+          "name": "Exfiltration Over Alternative Protocol",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1567",
+          "name": "Exfiltration Over Web Service",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    },
+    {
+      "shortname": "impact",
+      "attack_id": "TA0040",
+      "name": "Impact",
+      "covered": 1,
+      "total": 6,
+      "coverage_pct": 16.7,
+      "techniques": [
+        {
+          "id": "T1485",
+          "name": "Data Destruction",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "covered": true,
+          "detection_count": 2,
+          "detections": [
+            "CD-06: Mass File Rename to Ransomware Extension",
+            "Mass File Rename to Ransomware Extension"
+          ],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1489",
+          "name": "Service Stop",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1490",
+          "name": "Inhibit System Recovery",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1491",
+          "name": "Defacement",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        },
+        {
+          "id": "T1498",
+          "name": "Network Denial of Service",
+          "covered": false,
+          "detection_count": 0,
+          "detections": [],
+          "covered_subtechniques": []
+        }
+      ]
+    }
+  ],
+  "detections": [
+    {
+      "name": "CD-01: LSASS Credential Dumping Attempt",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1003.001",
+          "name": "LSASS Memory",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-02: Encoded or Obfuscated PowerShell Execution",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1059.001",
+          "name": "PowerShell",
+          "known": true
+        },
+        {
+          "id": "T1027",
+          "name": "Obfuscated Files or Information",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-03: LOLBin Spawning External Network Connection",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1218",
+          "name": "System Binary Proxy Execution",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-04: Scheduled Task or Service Created for Persistence",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1053.005",
+          "name": "Scheduled Task",
+          "known": true
+        },
+        {
+          "id": "T1543.003",
+          "name": "T1543.003",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-05: Office App Spawning Script Interpreter",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1204.002",
+          "name": "Malicious File",
+          "known": true
+        },
+        {
+          "id": "T1566.001",
+          "name": "Spearphishing Attachment",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-06: Mass File Rename to Ransomware Extension",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-07: Security Tooling or Logging Disabled",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1562.001",
+          "name": "Disable or Modify Tools",
+          "known": true
+        },
+        {
+          "id": "T1070.001",
+          "name": "T1070.001",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-08: Archive Utility Staging Sensitive Data",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1560.001",
+          "name": "T1560.001",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-09: Network Beaconing to Public IP",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1071",
+          "name": "Application Layer Protocol",
+          "known": true
+        },
+        {
+          "id": "T1571",
+          "name": "Non-Standard Port",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-10: Rare External Domain Contacted by Scripting Engine",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1071.001",
+          "name": "Web Protocols",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-11: Impossible Travel Logon",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1078",
+          "name": "Valid Accounts",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-12: Password Spray Pattern",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1110.003",
+          "name": "Password Spraying",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-13: Account Added to Sensitive Security Group",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1098",
+          "name": "Account Manipulation",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-14: New MFA Method Registered Then Immediate Risky Sign-in",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1556.006",
+          "name": "T1556.006",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "CD-15: Phishing Email with Lookalike Domain and Urgency Language",
+      "source": "defender",
+      "platform": "Microsoft Defender XDR",
+      "techniques": [
+        {
+          "id": "T1566.002",
+          "name": "Spearphishing Link",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "LSASS Credential Dumping Attempt",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1003.001",
+          "name": "LSASS Memory",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Encoded or Obfuscated PowerShell Execution",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1059.001",
+          "name": "PowerShell",
+          "known": true
+        },
+        {
+          "id": "T1027",
+          "name": "Obfuscated Files or Information",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "LOLBin Spawning External Network Connection",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1218",
+          "name": "System Binary Proxy Execution",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Scheduled Task or Service Created for Persistence",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1053.005",
+          "name": "Scheduled Task",
+          "known": true
+        },
+        {
+          "id": "T1543.003",
+          "name": "T1543.003",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Office Application Spawning Script Interpreter",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1204.002",
+          "name": "Malicious File",
+          "known": true
+        },
+        {
+          "id": "T1566.001",
+          "name": "Spearphishing Attachment",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Mass File Rename to Ransomware Extension",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1486",
+          "name": "Data Encrypted for Impact",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Security Tooling or Logging Disabled",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1562.001",
+          "name": "Disable or Modify Tools",
+          "known": true
+        },
+        {
+          "id": "T1070.001",
+          "name": "T1070.001",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Archive Utility Staging Sensitive Data",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1560.001",
+          "name": "T1560.001",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Network Beaconing to Public IP",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1071",
+          "name": "Application Layer Protocol",
+          "known": true
+        },
+        {
+          "id": "T1571",
+          "name": "Non-Standard Port",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Rare External Domain Contacted by Scripting Engine",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1071.001",
+          "name": "Web Protocols",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Impossible Travel Logon",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1078",
+          "name": "Valid Accounts",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Password Spray Pattern",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1110.003",
+          "name": "Password Spraying",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Account Added to Sensitive Security Group",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1098",
+          "name": "Account Manipulation",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "New MFA Method Registered Then Immediate Risky Sign-in",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1556.006",
+          "name": "T1556.006",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Phishing Email with Lookalike Domain and Urgency Language",
+      "source": "sentinel",
+      "platform": "Microsoft Sentinel",
+      "techniques": [
+        {
+          "id": "T1566.002",
+          "name": "Spearphishing Link",
+          "known": true
+        }
+      ]
+    },
+    {
+      "name": "Encoded PowerShell Execution",
+      "source": "sigma",
+      "platform": "Sigma",
+      "techniques": [
+        {
+          "id": "T1059.001",
+          "name": "PowerShell",
+          "known": true
+        },
+        {
+          "id": "T1027",
+          "name": "Obfuscated Files or Information",
+          "known": true
+        }
+      ]
+    }
+  ]
+}
