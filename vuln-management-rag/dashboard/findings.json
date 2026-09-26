@@ -1,0 +1,282 @@
+{
+  "generated_at": "2026-09-24T13:23:54.527897+00:00",
+  "summary": {
+    "total_findings": 13,
+    "hosts_scanned": 4,
+    "severity_counts": {
+      "critical": 3,
+      "high": 6,
+      "medium": 3,
+      "low": 1,
+      "info": 0
+    },
+    "top_cves": [
+      {
+        "cve": "CVE-2021-44228",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2022-22965",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2016-2183",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2019-0708",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2021-34527",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2022-34718",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2024-21412",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2023-44487",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2023-36884",
+        "count": 1
+      },
+      {
+        "cve": "CVE-2024-30078",
+        "count": 1
+      }
+    ]
+  },
+  "hosts": [
+    {
+      "host": "srv-sql-01.corp.contoso.com",
+      "total": 3,
+      "critical": 1,
+      "high": 2,
+      "medium": 0,
+      "low": 0,
+      "info": 0,
+      "max_cvss": 9.8
+    },
+    {
+      "host": "srv-web-01.corp.contoso.com",
+      "total": 3,
+      "critical": 1,
+      "high": 1,
+      "medium": 1,
+      "low": 0,
+      "info": 0,
+      "max_cvss": 10.0
+    },
+    {
+      "host": "pc-eng-12.corp.contoso.com",
+      "total": 4,
+      "critical": 1,
+      "high": 1,
+      "medium": 1,
+      "low": 1,
+      "info": 0,
+      "max_cvss": 8.8
+    },
+    {
+      "host": "pc-hr-07.corp.contoso.com",
+      "total": 3,
+      "critical": 0,
+      "high": 2,
+      "medium": 1,
+      "low": 0,
+      "info": 0,
+      "max_cvss": 8.3
+    }
+  ],
+  "findings": [
+    {
+      "chunk_id": "vuln-fe116001f5a3",
+      "cve": "CVE-2021-44228",
+      "name": "apache log4j 2.14.0 \u2014 CVE-2021-44228",
+      "severity": "critical",
+      "cvss": 10.0,
+      "host": "srv-web-01.corp.contoso.com",
+      "solution": "Apply the recommended update: Upgrade Apache Log4j to 2.17.1",
+      "risk_score": 10.0,
+      "sla_days": 7,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-44228"
+      ]
+    },
+    {
+      "chunk_id": "vuln-48ade56b755a",
+      "cve": "CVE-2019-0708",
+      "name": "microsoft windows_server_2022 10.0.20348.1 \u2014 CVE-2019-0708",
+      "severity": "critical",
+      "cvss": 9.8,
+      "host": "srv-sql-01.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply Microsoft update for CVE-2019-0708 (BlueKeep)",
+      "risk_score": 9.8,
+      "sla_days": 7,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-0708"
+      ]
+    },
+    {
+      "chunk_id": "vuln-a9154f8343d3",
+      "cve": "CVE-2022-22965",
+      "name": "vmware spring_framework 5.3.17 \u2014 CVE-2022-22965",
+      "severity": "high",
+      "cvss": 9.8,
+      "host": "srv-web-01.corp.contoso.com",
+      "solution": "Apply the recommended update: Upgrade Spring Framework to 5.3.18+",
+      "risk_score": 8.82,
+      "sla_days": 30,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-22965"
+      ]
+    },
+    {
+      "chunk_id": "vuln-4fa76332a9a7",
+      "cve": "CVE-2022-34718",
+      "name": "microsoft windows_tcpip 10.0.20348.1 \u2014 CVE-2022-34718",
+      "severity": "high",
+      "cvss": 9.8,
+      "host": "srv-sql-01.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply the September 2022 cumulative update",
+      "risk_score": 8.82,
+      "sla_days": 30,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-34718"
+      ]
+    },
+    {
+      "chunk_id": "vuln-dfeca3bbb085",
+      "cve": "CVE-2023-4863",
+      "name": "google chrome 116.0.5845.110 \u2014 CVE-2023-4863",
+      "severity": "critical",
+      "cvss": 8.8,
+      "host": "pc-eng-12.corp.contoso.com",
+      "solution": "Apply the recommended update: Update Google Chrome to 116.0.5845.187 or later",
+      "risk_score": 8.8,
+      "sla_days": 7,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-4863"
+      ]
+    },
+    {
+      "chunk_id": "vuln-4c7aa7d2d9de",
+      "cve": "CVE-2021-34527",
+      "name": "microsoft windows_print_spooler 10.0.20348.1 \u2014 CVE-2021-34527",
+      "severity": "high",
+      "cvss": 8.8,
+      "host": "srv-sql-01.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply Microsoft update for CVE-2021-34527 (PrintNightmare)",
+      "risk_score": 7.92,
+      "sla_days": 30,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-34527"
+      ]
+    },
+    {
+      "chunk_id": "vuln-c9385265d962",
+      "cve": "CVE-2024-30078",
+      "name": "microsoft windows_wifi_driver 10.0.22631.3737 \u2014 CVE-2024-30078",
+      "severity": "high",
+      "cvss": 8.8,
+      "host": "pc-eng-12.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply the June 2024 cumulative update",
+      "risk_score": 7.92,
+      "sla_days": 30,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-30078"
+      ]
+    },
+    {
+      "chunk_id": "vuln-4c8946c6affd",
+      "cve": "CVE-2023-36884",
+      "name": "microsoft office 16.0.16130.20218 \u2014 CVE-2023-36884",
+      "severity": "high",
+      "cvss": 8.3,
+      "host": "pc-hr-07.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply the Microsoft Office security update for CVE-2023-36884",
+      "risk_score": 7.47,
+      "sla_days": 30,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-36884"
+      ]
+    },
+    {
+      "chunk_id": "vuln-a4cf11716028",
+      "cve": "CVE-2024-21412",
+      "name": "microsoft windows_smartscreen 10.0.22631.2861 \u2014 CVE-2024-21412",
+      "severity": "high",
+      "cvss": 8.1,
+      "host": "pc-hr-07.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply the February 2024 cumulative update",
+      "risk_score": 7.29,
+      "sla_days": 30,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-21412"
+      ]
+    },
+    {
+      "chunk_id": "vuln-b703855ce659",
+      "cve": "CVE-2022-3786",
+      "name": "openssl openssl 3.0.6 \u2014 CVE-2022-3786",
+      "severity": "medium",
+      "cvss": 6.5,
+      "host": "pc-eng-12.corp.contoso.com",
+      "solution": "Apply the recommended update: Upgrade OpenSSL to 3.0.7 or later",
+      "risk_score": 4.55,
+      "sla_days": 90,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-3786"
+      ]
+    },
+    {
+      "chunk_id": "vuln-58430d162ffe",
+      "cve": "CVE-2016-2183",
+      "name": "openssl openssl 1.0.2k \u2014 CVE-2016-2183",
+      "severity": "medium",
+      "cvss": 5.9,
+      "host": "srv-web-01.corp.contoso.com",
+      "solution": "Apply the recommended update: Disable 3DES cipher suites; upgrade OpenSSL",
+      "risk_score": 4.13,
+      "sla_days": 90,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2016-2183"
+      ]
+    },
+    {
+      "chunk_id": "vuln-3d282ff89d5b",
+      "cve": "CVE-2023-44487",
+      "name": "google chrome 117.0.5938.132 \u2014 CVE-2023-44487",
+      "severity": "medium",
+      "cvss": 5.3,
+      "host": "pc-hr-07.corp.contoso.com",
+      "solution": "Apply the recommended update: Update Google Chrome to the latest stable channel",
+      "risk_score": 3.71,
+      "sla_days": 90,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-44487"
+      ]
+    },
+    {
+      "chunk_id": "vuln-d47f5670bc99",
+      "cve": "CVE-2021-40444",
+      "name": "microsoft mshtml 11.0.22000.100 \u2014 CVE-2021-40444",
+      "severity": "low",
+      "cvss": 3.1,
+      "host": "pc-eng-12.corp.contoso.com",
+      "solution": "Apply the recommended update: Apply the September 2021 cumulative update",
+      "risk_score": 1.55,
+      "sla_days": 180,
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-40444"
+      ]
+    }
+  ]
+}
