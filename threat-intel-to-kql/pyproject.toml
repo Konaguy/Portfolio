@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "threat-intel-to-kql"
+version = "0.1.0"
+description = "Translate raw threat intelligence into validated Microsoft Defender KQL hunting queries"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+ti2kql = "ti2kql.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ti2kql*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

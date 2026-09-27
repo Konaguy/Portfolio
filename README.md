@@ -19,6 +19,9 @@ detection languages), not as a buzzword.
 | [`sigma-rule-translator/`](./sigma-rule-translator) | A CLI tool that translates vendor-agnostic Sigma detection rules into Microsoft Sentinel KQL and CrowdStrike Falcon query syntax, so detection logic isn't locked to one platform. |
 | [`crowdstrike-rtr-toolkit/`](./crowdstrike-rtr-toolkit) | A tested, packaged Python library wrapping the CrowdStrike Falcon Real Time Response API for common incident response actions (containment, process kill, evidence collection). |
 | [`llm-soc-copilot/`](./llm-soc-copilot) | An LLM-powered alert triage assistant: RAG-grounded enrichment over closed cases, schema-validated structured output via forced tool-use, a hallucinated-citation guard, and an eval harness scoring verdicts against labeled ground truth. |
+| [`vuln-management-rag/`](./vuln-management-rag) | A multi-agent RAG assistant (LangGraph + Qdrant + Chainlit) that ingests Tenable exports and security policies and answers SOC-analyst questions with policy-grounded, cited remediation guidance. |
+| [`threat-intel-to-kql/`](./threat-intel-to-kql) | Turns raw threat intel (CVE advisories, STIX/MISP feeds, IOC lists) into validated Microsoft Defender KQL hunting queries: deterministic IOC extraction, LLM synthesis, and static KQL + IOC-grounding validation. |
+| [`attack-coverage-tracker/`](./attack-coverage-tracker) | Parses the repo's Defender/Sentinel/Sigma detections, maps them to MITRE ATT&CK, and reports coverage — an ATT&CK Navigator layer plus a self-contained heatmap dashboard showing what's covered and where the gaps are. |
 | [`detection-ci/`](./detection-ci) | A Detection-as-Code CI gate: a GitHub Actions pipeline that parses and validates the repo's Sigma / Defender / Sentinel rules (structure, ATT&CK tags, KQL sanity) on every PR, so a broken detection never merges. |
 
 ## Why these projects
@@ -35,6 +38,16 @@ detection languages), not as a buzzword.
   matter in a security context — forced structured output, a hallucination
   check on RAG citations, and an eval harness rather than a demo that "seems
   to work."
+- **The vuln-management RAG assistant** shows a full multi-agent RAG system —
+  ingestion, a vector store, a LangGraph router/retriever/specialist pipeline,
+  and a chat UI — with verified grounding rather than a wrapper around an API.
+- **The threat-intel → KQL translator** shows the right division of labour
+  between deterministic code and an LLM: regex for the indicators that must be
+  exact, the model for the query synthesis, and static validation so nothing
+  ungrounded reaches an analyst's console.
+- **The ATT&CK coverage tracker** shows detection-program maturity — measuring
+  what the detections actually cover against the adversary playbook, gaps
+  included, instead of just adding more rules.
 - **The Detection-as-Code CI** shows detection engineering as a software
   discipline — detections are version-controlled, validated, and gated in CI
   like any other code, not hand-edited in a console.

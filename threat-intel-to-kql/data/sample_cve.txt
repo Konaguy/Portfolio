@@ -1,0 +1,18 @@
+Threat Advisory: Exploitation of CVE-2023-34362 (MOVEit Transfer SQL injection)
+
+The Cl0p ransomware group has been observed exploiting CVE-2023-34362, a SQL
+injection vulnerability in Progress MOVEit Transfer, to deploy a web shell
+named human2.aspx and exfiltrate data.
+
+Observed indicators of compromise:
+
+- Web shell hash (SHA256):
+  702421bcee1785d93271d311f0203da34cc936317e299575b06503945a6ea1e0
+- Second-stage payload (SHA256):
+  387cee566aedbafa8c114ed1c6b98d8b9b65e9f178cf2f6ae2f5ac441082747a
+- C2 IP addresses: 148.113.152.144 and 89.39.104.118
+- Exfil domain: hxxps://exfil-node[.]badactor[.]com/upload
+- Dropped file path: C:\MOVEitTransfer\wwwroot\human2.aspx
+
+Defenders should hunt for the presence of these indicators and for anomalous
+child processes spawned by the MOVEit w3wp.exe worker process.
