@@ -1,0 +1,5 @@
+# Core (the only runtime dependency)
+PyYAML>=6.0
+
+# Dev / tests
+pytest>=8.0

@@ -1,0 +1,89 @@
+name: Detection-as-Code CI
+
+# Validate detection content on every change. The gate parses the repo's
+# Sigma / Defender / Sentinel rules and fails the build on structural, ATT&CK,
+# or KQL problems, so a bad detection never merges.
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "security-automation-soar/detection-rules/**"
+      - "sigma-rule-translator/rules/**"
+      - "detection-ci/**"
+      - ".github/workflows/detection-ci.yml"
+  pull_request:
+    paths:
+      - "security-automation-soar/detection-rules/**"
+      - "sigma-rule-translator/rules/**"
+      - "detection-ci/**"
+      - ".github/workflows/detection-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-detections:
+    name: Validate detections
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: detection-ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Run Detection-as-Code gate
+        run: python -m dac.cli --repo --format github --json-out dac-report.json
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dac-report
+          path: detection-ci/dac-report.json
+
+  unit-tests:
+    name: DAC unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: detection-ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: pytest
+        run: python -m pytest -q
+
+  coverage-report:
+    name: ATT&CK coverage (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate ATT&CK coverage if the tracker is present
+        run: |
+          if [ -d attack-coverage-tracker/attackcov ]; then
+            pip install -r attack-coverage-tracker/requirements.txt
+            (cd attack-coverage-tracker && python -m attackcov.cli --repo)
+          else
+            echo "attack-coverage-tracker not present on this branch; skipping."
+          fi
+      - name: Upload coverage + navigator layer
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: attack-coverage
+          path: |
+            attack-coverage-tracker/dashboard/coverage.json
+            attack-coverage-tracker/navigator-layer.json
+          if-no-files-found: ignore

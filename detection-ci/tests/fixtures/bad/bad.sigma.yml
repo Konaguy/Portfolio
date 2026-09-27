@@ -1,0 +1,10 @@
+title: Broken Sigma Rule
+status: nonsense-status
+tags:
+  - attack.t99
+logsource:
+  foo: bar
+detection:
+  selection:
+    Image|endswith: '\evil.exe'
+  condition: selektion

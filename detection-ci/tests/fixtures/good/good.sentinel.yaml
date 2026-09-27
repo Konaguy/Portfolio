@@ -1,0 +1,9 @@
+- id: good-0001
+  name: "Good: Impossible travel"
+  kind: Scheduled
+  severity: High
+  relevantTechniques: [T1078.004]
+  query: |
+    SigninLogs
+    | where ResultType == 0
+    | where Country != PrevCountry

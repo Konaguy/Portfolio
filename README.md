@@ -22,6 +22,7 @@ detection languages), not as a buzzword.
 | [`vuln-management-rag/`](./vuln-management-rag) | A multi-agent RAG assistant (LangGraph + Qdrant + Chainlit) that ingests Tenable exports and security policies and answers SOC-analyst questions with policy-grounded, cited remediation guidance. |
 | [`threat-intel-to-kql/`](./threat-intel-to-kql) | Turns raw threat intel (CVE advisories, STIX/MISP feeds, IOC lists) into validated Microsoft Defender KQL hunting queries: deterministic IOC extraction, LLM synthesis, and static KQL + IOC-grounding validation. |
 | [`attack-coverage-tracker/`](./attack-coverage-tracker) | Parses the repo's Defender/Sentinel/Sigma detections, maps them to MITRE ATT&CK, and reports coverage — an ATT&CK Navigator layer plus a self-contained heatmap dashboard showing what's covered and where the gaps are. |
+| [`detection-ci/`](./detection-ci) | A Detection-as-Code CI gate: a GitHub Actions pipeline that parses and validates the repo's Sigma / Defender / Sentinel rules (structure, ATT&CK tags, KQL sanity) on every PR, so a broken detection never merges. |
 
 ## Why these projects
 
@@ -47,6 +48,9 @@ detection languages), not as a buzzword.
 - **The ATT&CK coverage tracker** shows detection-program maturity — measuring
   what the detections actually cover against the adversary playbook, gaps
   included, instead of just adding more rules.
+- **The Detection-as-Code CI** shows detection engineering as a software
+  discipline — detections are version-controlled, validated, and gated in CI
+  like any other code, not hand-edited in a console.
 
 ## Background
 

@@ -1,0 +1,7 @@
+[
+  {
+    "displayName": "Good: LSASS access",
+    "queryCondition": { "queryText": "DeviceEvents\n| where ActionType == \"OpenProcessApiCall\"\n| where FileName =~ \"lsass.exe\"\n| project Timestamp, DeviceId" },
+    "detectionAction": { "alertTemplate": { "severity": "high", "mitreTechniques": ["T1003.001"] } }
+  }
+]
