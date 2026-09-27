@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Endpoint Vulnerability Posture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --page:        #f5f7fa;
+    --surface:     #ffffff;
+    --surface-2:   #eef1f6;
+    --ink:         #101725;
+    --ink-2:       #57616f;
+    --ink-3:       #868f9d;
+    --border:      #e2e6ec;
+    --border-2:    #d3d9e2;
+    --accent:      #2a78d6;
+
+    --track:       #e7ebf1;
+
+    --crit:        #d23b3a;
+    --crit-ink:    #ffffff;
+    --high:        #e06a2c;
+    --high-ink:    #ffffff;
+    --med:         #b6820a;
+    --med-ink:     #ffffff;
+    --low:         #3f7cc4;
+    --low-ink:     #ffffff;
+
+    --shadow: 0 1px 2px rgba(16,23,37,.06), 0 6px 20px rgba(16,23,37,.05);
+    --radius: 12px;
+    --font-display: "Archivo", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page:      #0f1218;
+      --surface:   #171b22;
+      --surface-2: #1f242d;
+      --ink:       #eef1f5;
+      --ink-2:     #a4adba;
+      --ink-3:     #79828f;
+      --border:    #262c36;
+      --border-2:  #333b47;
+      --accent:    #4a90e6;
+      --track:     #232a34;
+      --crit:      #e05654; --crit-ink:#12151b;
+      --high:      #e58044; --high-ink:#12151b;
+      --med:       #d8a52a; --med-ink:#12151b;
+      --low:       #5a97dd; --low-ink:#12151b;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:      #0f1218;
+    --surface:   #171b22;
+    --surface-2: #1f242d;
+    --ink:       #eef1f5;
+    --ink-2:     #a4adba;
+    --ink-3:     #79828f;
+    --border:    #262c36;
+    --border-2:  #333b47;
+    --accent:    #4a90e6;
+    --track:     #232a34;
+    --crit:      #e05654; --crit-ink:#12151b;
+    --high:      #e58044; --high-ink:#12151b;
+    --med:       #d8a52a; --med-ink:#12151b;
+    --low:       #5a97dd; --low-ink:#12151b;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 56px; }
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Header */
+  header.top { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 24px; justify-content: space-between; margin-bottom: 24px; }
+  .brand h1 { font-size: 24px; letter-spacing: -.01em; }
+  .brand .sub { color: var(--ink-2); font-size: 13.5px; margin-top: 4px; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500;
+    padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border-2); color: var(--ink-2); background: var(--surface); }
+  .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .pill.demo { color: var(--high); border-color: color-mix(in srgb, var(--high) 40%, var(--border-2)); }
+  .pill.demo .dot { background: var(--high); }
+  button.toggle { font: inherit; font-size: 12px; cursor: pointer; padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--border-2); background: var(--surface); color: var(--ink-2); }
+  button.toggle:hover { border-color: var(--accent); color: var(--ink); }
+
+  /* KPI tiles */
+  .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 16px 14px; box-shadow: var(--shadow); }
+  .kpi .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 600; }
+  .kpi .value { font-family: var(--font-display); font-size: 32px; line-height: 1.1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .kpi .foot { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  .kpi.accent-crit .value { color: var(--crit); }
+  .kpi.accent-high .value { color: var(--high); }
+
+  /* Panels */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 18px 20px; box-shadow: var(--shadow); }
+  .panel h2 { font-size: 15px; letter-spacing: .01em; }
+  .panel .cap { color: var(--ink-2); font-size: 12.5px; margin: 2px 0 16px; }
+
+  /* Severity bars */
+  .sevrow { display: grid; grid-template-columns: 78px 1fr 40px; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .sevrow .name { font-size: 13px; font-weight: 500; }
+  .sevrow .track { height: 16px; background: var(--track); border-radius: 6px; overflow: hidden; }
+  .sevrow .fill { height: 100%; border-radius: 6px; min-width: 3px; }
+  .sevrow .n { text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+  /* Host stacked bars */
+  .hostrow { margin-bottom: 14px; }
+  .hostrow .hh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+  .hostrow .hn { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hostrow .hx { font-size: 11.5px; color: var(--ink-2); white-space: nowrap; }
+  .stack { display: flex; height: 18px; background: var(--track); border-radius: 6px; overflow: hidden; gap: 2px; }
+  .stack .seg { height: 100%; min-width: 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: 4px; }
+  .legend .item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+  .legend .sw { width: 11px; height: 11px; border-radius: 3px; }
+
+  .sw.crit, .fill.crit, .seg.crit { background: var(--crit); }
+  .sw.high, .fill.high, .seg.high { background: var(--high); }
+  .sw.med,  .fill.med,  .seg.med  { background: var(--med); }
+  .sw.low,  .fill.low,  .seg.low  { background: var(--low); }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+  .chips { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+  .chip { font: inherit; font-size: 12.5px; cursor: pointer; padding: 6px 11px; border-radius: 999px;
+    border: 1px solid var(--border-2); background: var(--surface); color: var(--ink-2); display: inline-flex; align-items: center; gap: 7px; }
+  .chip .cdot { width: 8px; height: 8px; border-radius: 50%; }
+  .chip.crit .cdot { background: var(--crit); } .chip.high .cdot { background: var(--high); }
+  .chip.med .cdot { background: var(--med); } .chip.low .cdot { background: var(--low); }
+  .chip[aria-pressed="true"] { color: var(--ink); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--surface)); }
+  .chip[aria-pressed="false"] { opacity: .55; }
+  .filters select, .filters input {
+    font: inherit; font-size: 13px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border-2);
+    background: var(--surface); color: var(--ink); }
+  .filters input { min-width: 160px; flex: 1 1 160px; }
+  .filters .spacer { flex: 1 1 auto; }
+  .filters .count { font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+
+  /* Table */
+  .tablewrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 720px; }
+  thead th { text-align: left; font-family: var(--font-body); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--ink-3); font-weight: 600; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-2); white-space: nowrap; }
+  thead th.right, td.right { text-align: right; }
+  tbody td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13.5px; vertical-align: middle; }
+  tbody tr.frow { cursor: pointer; }
+  tbody tr.frow:hover { background: var(--surface-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  .sev { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 6px; white-space: nowrap; }
+  .sev.crit { background: var(--crit); color: var(--crit-ink); }
+  .sev.high { background: var(--high); color: var(--high-ink); }
+  .sev.med  { background: var(--med);  color: var(--med-ink); }
+  .sev.low  { background: var(--low);  color: var(--low-ink); }
+  td .cve { font-family: var(--font-mono); font-size: 12.5px; }
+  td .host { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
+  td .fname { color: var(--ink); }
+  .cvss { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .detail td { background: var(--surface-2); font-size: 13px; color: var(--ink-2); }
+  .detail .sol { color: var(--ink); }
+  .detail a { color: var(--accent); }
+  .caret { display: inline-block; width: 0; height: 0; border-left: 5px solid var(--ink-3); border-top: 4px solid transparent; border-bottom: 4px solid transparent; transition: transform .15s ease; margin-right: 2px; }
+  tr.frow[aria-expanded="true"] .caret { transform: rotate(90deg); }
+  .empty { padding: 28px 14px; text-align: center; color: var(--ink-2); font-size: 14px; }
+
+  footer.foot { margin-top: 22px; color: var(--ink-3); font-size: 12px; text-align: center; }
+  footer.foot code { font-family: var(--font-mono); }
+
+  @media (max-width: 860px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .brand h1 { font-size: 21px; }
+    .kpi .value { font-size: 27px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Endpoint Vulnerability Posture</h1>
+      <div class="sub">Microsoft Defender Vulnerability Management — scan across monitored endpoints</div>
+    </div>
+    <div class="meta">
+      <span class="pill" id="sourcePill"><span class="dot"></span> Defender MDVM</span>
+      <span class="pill" id="scanPill">—</span>
+      <span class="pill demo" id="demoPill" hidden><span class="dot"></span> Sample data</span>
+      <button class="toggle" id="themeBtn" type="button" aria-label="Toggle theme">◐ Theme</button>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis" aria-label="Summary metrics"></section>
+
+  <div class="grid2">
+    <section class="panel" aria-labelledby="sevTitle">
+      <h2 id="sevTitle">Findings by severity</h2>
+      <p class="cap">All open findings across scanned endpoints.</p>
+      <div id="sevBars"></div>
+    </section>
+    <section class="panel" aria-labelledby="hostTitle">
+      <h2 id="hostTitle">Risk by host</h2>
+      <p class="cap">Findings per endpoint, stacked by severity. Sorted by exposure.</p>
+      <div id="hostBars"></div>
+      <div class="legend" id="hostLegend"></div>
+    </section>
+  </div>
+
+  <section aria-labelledby="tblTitle">
+    <div class="filters">
+      <div class="chips" id="sevChips" role="group" aria-label="Filter by severity"></div>
+      <select id="hostSel" aria-label="Filter by host"><option value="">All hosts</option></select>
+      <input id="search" type="search" placeholder="Search CVE, software, host…" aria-label="Search findings">
+      <span class="spacer"></span>
+      <span class="count" id="tblCount"></span>
+    </div>
+    <div class="tablewrap">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:120px">Severity</th>
+              <th>CVE</th>
+              <th>Finding</th>
+              <th>Host</th>
+              <th class="right" style="width:70px">CVSS</th>
+              <th class="right" style="width:74px">Risk</th>
+              <th class="right" style="width:96px">SLA (days)</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <h2 id="tblTitle" hidden>Findings</h2>
+  </section>
+
+  <footer class="foot">
+    Generated by the Vulnerability Management RAG Assistant · data from <code>findings.json</code> (falls back to bundled sample).
+  </footer>
+</div>
+
+<script>
+// Bundled sample so the page renders standalone; scan_cli.py overwrites
+// findings.json for the real workflow, which is fetched and preferred.
+const DEFAULT_FINDINGS = {"generated_at":"2026-09-24T13:23:54.527897+00:00","summary":{"total_findings":13,"hosts_scanned":4,"severity_counts":{"critical":3,"high":6,"medium":3,"low":1,"info":0},"top_cves":[{"cve":"CVE-2021-44228","count":1}]},"hosts":[{"host":"srv-sql-01.corp.contoso.com","total":3,"critical":1,"high":2,"medium":0,"low":0,"info":0,"max_cvss":9.8},{"host":"srv-web-01.corp.contoso.com","total":3,"critical":1,"high":1,"medium":1,"low":0,"info":0,"max_cvss":10.0},{"host":"pc-eng-12.corp.contoso.com","total":4,"critical":1,"high":1,"medium":1,"low":1,"info":0,"max_cvss":8.8},{"host":"pc-hr-07.corp.contoso.com","total":3,"critical":0,"high":2,"medium":1,"low":0,"info":0,"max_cvss":8.3}],"findings":[{"cve":"CVE-2021-44228","name":"apache log4j 2.14.0 — CVE-2021-44228","severity":"critical","cvss":10.0,"host":"srv-web-01.corp.contoso.com","solution":"Apply the recommended update: Upgrade Apache Log4j to 2.17.1","risk_score":10.0,"sla_days":7,"references":["https://nvd.nist.gov/vuln/detail/CVE-2021-44228"]},{"cve":"CVE-2019-0708","name":"microsoft windows_server_2022 10.0.20348.1 — CVE-2019-0708","severity":"critical","cvss":9.8,"host":"srv-sql-01.corp.contoso.com","solution":"Apply the recommended update: Apply Microsoft update for CVE-2019-0708 (BlueKeep)","risk_score":9.8,"sla_days":7,"references":["https://nvd.nist.gov/vuln/detail/CVE-2019-0708"]},{"cve":"CVE-2022-22965","name":"vmware spring_framework 5.3.17 — CVE-2022-22965","severity":"high","cvss":9.8,"host":"srv-web-01.corp.contoso.com","solution":"Apply the recommended update: Upgrade Spring Framework to 5.3.18+","risk_score":8.82,"sla_days":30,"references":["https://nvd.nist.gov/vuln/detail/CVE-2022-22965"]},{"cve":"CVE-2022-34718","name":"microsoft windows_tcpip 10.0.20348.1 — CVE-2022-34718","severity":"high","cvss":9.8,"host":"srv-sql-01.corp.contoso.com","solution":"Apply the recommended update: Apply the September 2022 cumulative update","risk_score":8.82,"sla_days":30,"references":["https://nvd.nist.gov/vuln/detail/CVE-2022-34718"]},{"cve":"CVE-2023-4863","name":"google chrome 116.0.5845.110 — CVE-2023-4863","severity":"critical","cvss":8.8,"host":"pc-eng-12.corp.contoso.com","solution":"Apply the recommended update: Update Google Chrome to 116.0.5845.187 or later","risk_score":8.8,"sla_days":7,"references":["https://nvd.nist.gov/vuln/detail/CVE-2023-4863"]},{"cve":"CVE-2021-34527","name":"microsoft windows_print_spooler 10.0.20348.1 — CVE-2021-34527","severity":"high","cvss":8.8,"host":"srv-sql-01.corp.contoso.com","solution":"Apply the recommended update: Apply Microsoft update for CVE-2021-34527 (PrintNightmare)","risk_score":7.92,"sla_days":30,"references":["https://nvd.nist.gov/vuln/detail/CVE-2021-34527"]},{"cve":"CVE-2024-30078","name":"microsoft windows_wifi_driver 10.0.22631.3737 — CVE-2024-30078","severity":"high","cvss":8.8,"host":"pc-eng-12.corp.contoso.com","solution":"Apply the recommended update: Apply the June 2024 cumulative update","risk_score":7.92,"sla_days":30,"references":["https://nvd.nist.gov/vuln/detail/CVE-2024-30078"]},{"cve":"CVE-2023-36884","name":"microsoft office 16.0.16130.20218 — CVE-2023-36884","severity":"high","cvss":8.3,"host":"pc-hr-07.corp.contoso.com","solution":"Apply the recommended update: Apply the Microsoft Office security update for CVE-2023-36884","risk_score":7.47,"sla_days":30,"references":["https://nvd.nist.gov/vuln/detail/CVE-2023-36884"]},{"cve":"CVE-2024-21412","name":"microsoft windows_smartscreen 10.0.22631.2861 — CVE-2024-21412","severity":"high","cvss":8.1,"host":"pc-hr-07.corp.contoso.com","solution":"Apply the recommended update: Apply the February 2024 cumulative update","risk_score":7.29,"sla_days":30,"references":["https://nvd.nist.gov/vuln/detail/CVE-2024-21412"]},{"cve":"CVE-2022-3786","name":"openssl openssl 3.0.6 — CVE-2022-3786","severity":"medium","cvss":6.5,"host":"pc-eng-12.corp.contoso.com","solution":"Apply the recommended update: Upgrade OpenSSL to 3.0.7 or later","risk_score":4.55,"sla_days":90,"references":["https://nvd.nist.gov/vuln/detail/CVE-2022-3786"]},{"cve":"CVE-2016-2183","name":"openssl openssl 1.0.2k — CVE-2016-2183","severity":"medium","cvss":5.9,"host":"srv-web-01.corp.contoso.com","solution":"Apply the recommended update: Disable 3DES cipher suites; upgrade OpenSSL","risk_score":4.13,"sla_days":90,"references":["https://nvd.nist.gov/vuln/detail/CVE-2016-2183"]},{"cve":"CVE-2023-44487","name":"google chrome 117.0.5938.132 — CVE-2023-44487","severity":"medium","cvss":5.3,"host":"pc-hr-07.corp.contoso.com","solution":"Apply the recommended update: Update Google Chrome to the latest stable channel","risk_score":3.71,"sla_days":90,"references":["https://nvd.nist.gov/vuln/detail/CVE-2023-44487"]},{"cve":"CVE-2021-40444","name":"microsoft mshtml 11.0.22000.100 — CVE-2021-40444","severity":"low","cvss":3.1,"host":"pc-eng-12.corp.contoso.com","solution":"Apply the recommended update: Apply the September 2021 cumulative update","risk_score":1.55,"sla_days":180,"references":["https://nvd.nist.gov/vuln/detail/CVE-2021-40444"]}]};
+
+const SEV = ["critical", "high", "medium", "low"];
+const SEV_CLASS = { critical: "crit", high: "high", medium: "med", low: "low" };
+const SEV_LABEL = { critical: "Critical", high: "High", medium: "Medium", low: "Low" };
+
+let DATA = null;
+const filters = { sev: new Set(SEV), host: "", q: "" };
+const expanded = new Set();
+
+function shortHost(h) { return (h || "").split(".")[0]; }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function renderKpis() {
+  const s = DATA.summary, c = s.severity_counts;
+  const breaching = c.critical + c.high; // due soonest under the SLA policy
+  const tiles = [
+    { label: "Open findings", value: s.total_findings, foot: `across ${s.hosts_scanned} endpoints` },
+    { label: "Critical", value: c.critical, foot: "7-day SLA", cls: "accent-crit" },
+    { label: "High", value: c.high, foot: "30-day SLA", cls: "accent-high" },
+    { label: "Priority queue", value: breaching, foot: "critical + high" },
+    { label: "Endpoints", value: s.hosts_scanned, foot: "2 servers · 2 workstations" },
+  ];
+  document.getElementById("kpis").innerHTML = tiles.map(t => `
+    <div class="kpi ${t.cls || ""}">
+      <div class="label">${t.label}</div>
+      <div class="value">${t.value}</div>
+      <div class="foot">${t.foot}</div>
+    </div>`).join("");
+}
+
+function renderSevBars() {
+  const c = DATA.summary.severity_counts;
+  const max = Math.max(1, ...SEV.map(s => c[s] || 0));
+  document.getElementById("sevBars").innerHTML = SEV.map(s => {
+    const n = c[s] || 0;
+    const pct = (n / max) * 100;
+    return `<div class="sevrow">
+      <span class="name">${SEV_LABEL[s]}</span>
+      <span class="track"><span class="fill ${SEV_CLASS[s]}" style="width:${pct}%" title="${SEV_LABEL[s]}: ${n}"></span></span>
+      <span class="n">${n}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderHostBars() {
+  const hosts = DATA.hosts.slice();
+  document.getElementById("hostBars").innerHTML = hosts.map(h => {
+    const segs = SEV.map(s => {
+      const n = h[s] || 0;
+      if (!n) return "";
+      const w = (n / h.total) * 100;
+      return `<span class="seg ${SEV_CLASS[s]}" style="flex:${n}" title="${shortHost(h.host)} — ${SEV_LABEL[s]}: ${n}"></span>`;
+    }).join("");
+    return `<div class="hostrow">
+      <div class="hh">
+        <span class="hn" title="${esc(h.host)}">${esc(shortHost(h.host))}</span>
+        <span class="hx">${h.total} finding${h.total === 1 ? "" : "s"} · max CVSS ${h.max_cvss.toFixed(1)}</span>
+      </div>
+      <div class="stack">${segs}</div>
+    </div>`;
+  }).join("");
+  document.getElementById("hostLegend").innerHTML = SEV.map(s =>
+    `<span class="item"><span class="sw ${SEV_CLASS[s]}"></span>${SEV_LABEL[s]}</span>`).join("");
+}
+
+function renderChips() {
+  document.getElementById("sevChips").innerHTML = SEV.map(s =>
+    `<button class="chip ${SEV_CLASS[s]}" data-sev="${s}" type="button" aria-pressed="true">
+       <span class="cdot"></span>${SEV_LABEL[s]}</button>`).join("");
+  document.querySelectorAll("#sevChips .chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const s = btn.dataset.sev;
+      if (filters.sev.has(s)) filters.sev.delete(s); else filters.sev.add(s);
+      btn.setAttribute("aria-pressed", filters.sev.has(s));
+      renderTable();
+    });
+  });
+}
+
+function renderHostSelect() {
+  const sel = document.getElementById("hostSel");
+  const hosts = [...new Set(DATA.findings.map(f => f.host))].sort();
+  sel.insertAdjacentHTML("beforeend", hosts.map(h =>
+    `<option value="${esc(h)}">${esc(shortHost(h))}</option>`).join(""));
+  sel.addEventListener("change", () => { filters.host = sel.value; renderTable(); });
+}
+
+function filtered() {
+  const q = filters.q.trim().toLowerCase();
+  return DATA.findings.filter(f =>
+    filters.sev.has(f.severity) &&
+    (!filters.host || f.host === filters.host) &&
+    (!q || `${f.cve} ${f.name} ${f.host}`.toLowerCase().includes(q))
+  );
+}
+
+function renderTable() {
+  const rows = filtered();
+  const tb = document.getElementById("tbody");
+  document.getElementById("tblCount").textContent =
+    `${rows.length} of ${DATA.findings.length} findings`;
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="7" class="empty">No findings match the current filters.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = rows.map((f, i) => {
+    const key = f.cve + "|" + f.host;
+    const open = expanded.has(key);
+    const ref = (f.references && f.references[0]) || "";
+    const detail = open ? `<tr class="detail"><td colspan="7">
+        <span class="sol">Remediation:</span> ${esc(f.solution)}
+        ${ref ? ` · <a href="${esc(ref)}" target="_blank" rel="noopener">${esc(f.cve)} on NVD ↗</a>` : ""}
+      </td></tr>` : "";
+    return `<tr class="frow" data-key="${esc(key)}" aria-expanded="${open}" tabindex="0">
+        <td><span class="sev ${SEV_CLASS[f.severity]}"><span class="caret"></span>${SEV_LABEL[f.severity]}</span></td>
+        <td><span class="cve">${esc(f.cve)}</span></td>
+        <td class="fname">${esc(f.name)}</td>
+        <td><span class="host">${esc(shortHost(f.host))}</span></td>
+        <td class="right cvss">${f.cvss != null ? f.cvss.toFixed(1) : "—"}</td>
+        <td class="right num">${f.risk_score.toFixed(1)}</td>
+        <td class="right num">${f.sla_days}</td>
+      </tr>${detail}`;
+  }).join("");
+  tb.querySelectorAll("tr.frow").forEach(tr => {
+    const toggle = () => {
+      const k = tr.dataset.key;
+      if (expanded.has(k)) expanded.delete(k); else expanded.add(k);
+      renderTable();
+    };
+    tr.addEventListener("click", toggle);
+    tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  });
+}
+
+function renderMeta() {
+  let when = DATA.generated_at;
+  try { when = new Date(DATA.generated_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); } catch (e) {}
+  document.getElementById("scanPill").textContent = "Scanned " + when;
+}
+
+function boot(data, isSample) {
+  DATA = data;
+  document.getElementById("demoPill").hidden = !isSample;
+  renderMeta(); renderKpis(); renderSevBars(); renderHostBars();
+  renderChips(); renderHostSelect(); renderTable();
+}
+
+// Theme toggle (per-viewer convenience only)
+(function () {
+  const root = document.documentElement;
+  let saved = null;
+  try { saved = localStorage.getItem("vulndash-theme"); } catch (e) {}
+  if (saved) root.setAttribute("data-theme", saved);
+  document.getElementById("themeBtn").addEventListener("click", () => {
+    const cur = root.getAttribute("data-theme");
+    const isDark = cur ? cur === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    const next = isDark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("vulndash-theme", next); } catch (e) {}
+  });
+})();
+
+document.getElementById("search").addEventListener("input", e => { filters.q = e.target.value; renderTable(); });
+
+// Prefer live findings.json; fall back to the embedded sample.
+fetch("findings.json", { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error("no file"); return r.json(); })
+  .then(d => boot(d, false))
+  .catch(() => boot(DEFAULT_FINDINGS, true));
+</script>
+</body>
+</html>

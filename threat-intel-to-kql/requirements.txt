@@ -1,0 +1,7 @@
+# Core
+anthropic>=0.40
+pydantic>=2.5
+
+# Dev / tests (the extraction, validation, and translator pipeline test
+# offline with no anthropic dependency required)
+pytest>=8.0
