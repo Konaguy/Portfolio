@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "attack-coverage-tracker"
+version = "0.1.0"
+description = "Map a repository's detections to MITRE ATT&CK and report coverage (matrix + Navigator layer)"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+attackcov = "attackcov.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["attackcov*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

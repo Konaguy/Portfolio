@@ -1,0 +1,8 @@
+- id: sample-0001
+  name: "Sample: Impossible travel sign-in"
+  kind: Scheduled
+  relevantTechniques: [T1078.004]
+- id: sample-0002
+  name: "Sample: Password spray"
+  kind: Scheduled
+  relevantTechniques: [T1110.003]

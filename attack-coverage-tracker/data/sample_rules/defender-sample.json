@@ -1,0 +1,22 @@
+{
+  "detectionRules": [
+    {
+      "displayName": "Sample: LSASS credential dumping",
+      "detectionAction": {
+        "alertTemplate": {
+          "title": "LSASS access",
+          "mitreTechniques": ["T1003.001"]
+        }
+      }
+    },
+    {
+      "displayName": "Sample: Ransomware mass encryption",
+      "detectionAction": {
+        "alertTemplate": {
+          "title": "Ransomware",
+          "mitreTechniques": ["T1486", "T1490"]
+        }
+      }
+    }
+  ]
+}
