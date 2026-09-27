@@ -1,0 +1,34 @@
+{
+  "type": "bundle",
+  "id": "bundle--a1b2c3d4-0000-0000-0000-000000000001",
+  "spec_version": "2.1",
+  "objects": [
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--0001",
+      "created": "2024-05-01T00:00:00.000Z",
+      "name": "Emotet C2 IP",
+      "pattern": "[network-traffic:dst_ref.value = '203.0.113.55']",
+      "pattern_type": "stix"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--0002",
+      "created": "2024-05-01T00:00:00.000Z",
+      "name": "Emotet payload hash",
+      "pattern": "[file:hashes.'SHA-256' = 'aa11bb22cc33dd44ee55ff66aa77bb88cc99dd00ee11ff22aa33bb44cc55dd66']",
+      "pattern_type": "stix"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--0003",
+      "created": "2024-05-01T00:00:00.000Z",
+      "name": "Emotet distribution domain",
+      "pattern": "[domain-name:value = 'payload-delivery.example-malware.org']",
+      "pattern_type": "stix"
+    }
+  ]
+}
