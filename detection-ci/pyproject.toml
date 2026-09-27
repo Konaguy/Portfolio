@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "detection-ci"
+version = "0.1.0"
+description = "Detection-as-Code validation gate for Sigma / Defender / Sentinel detections"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+dac = "dac.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["dac*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

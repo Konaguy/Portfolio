@@ -19,8 +19,9 @@ detection languages), not as a buzzword.
 | [`sigma-rule-translator/`](./sigma-rule-translator) | A CLI tool that translates vendor-agnostic Sigma detection rules into Microsoft Sentinel KQL and CrowdStrike Falcon query syntax, so detection logic isn't locked to one platform. |
 | [`crowdstrike-rtr-toolkit/`](./crowdstrike-rtr-toolkit) | A tested, packaged Python library wrapping the CrowdStrike Falcon Real Time Response API for common incident response actions (containment, process kill, evidence collection). |
 | [`llm-soc-copilot/`](./llm-soc-copilot) | An LLM-powered alert triage assistant: RAG-grounded enrichment over closed cases, schema-validated structured output via forced tool-use, a hallucinated-citation guard, and an eval harness scoring verdicts against labeled ground truth. |
+| [`detection-ci/`](./detection-ci) | A Detection-as-Code CI gate: a GitHub Actions pipeline that parses and validates the repo's Sigma / Defender / Sentinel rules (structure, ATT&CK tags, KQL sanity) on every PR, so a broken detection never merges. |
 
-## Why these three
+## Why these projects
 
 - **SOAR architecture** shows I can design at the systems level — how alerts
   become cases, how response actions get gated by risk, how the audit trail
@@ -34,6 +35,9 @@ detection languages), not as a buzzword.
   matter in a security context — forced structured output, a hallucination
   check on RAG citations, and an eval harness rather than a demo that "seems
   to work."
+- **The Detection-as-Code CI** shows detection engineering as a software
+  discipline — detections are version-controlled, validated, and gated in CI
+  like any other code, not hand-edited in a console.
 
 ## Background
 

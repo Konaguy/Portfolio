@@ -1,0 +1,7 @@
+[
+  {
+    "displayName": "Bad: destructive + unknown table",
+    "queryCondition": { "queryText": ".drop table Foo | where x in (1, 2" },
+    "detectionAction": { "alertTemplate": { "severity": "extreme", "mitreTechniques": ["1003"] } }
+  }
+]
