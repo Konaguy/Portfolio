@@ -23,6 +23,7 @@ detection languages), not as a buzzword.
 | [`threat-intel-to-kql/`](./threat-intel-to-kql) | Turns raw threat intel (CVE advisories, STIX/MISP feeds, IOC lists) into validated Microsoft Defender KQL hunting queries: deterministic IOC extraction, LLM synthesis, and static KQL + IOC-grounding validation. |
 | [`attack-coverage-tracker/`](./attack-coverage-tracker) | Parses the repo's Defender/Sentinel/Sigma detections, maps them to MITRE ATT&CK, and reports coverage — an ATT&CK Navigator layer plus a self-contained heatmap dashboard showing what's covered and where the gaps are. |
 | [`detection-ci/`](./detection-ci) | A Detection-as-Code CI gate: a GitHub Actions pipeline that parses and validates the repo's Sigma / Defender / Sentinel rules (structure, ATT&CK tags, KQL sanity) on every PR, so a broken detection never merges. |
+| [`ActiveDirectory/OUPermissionsAudit/`](./ActiveDirectory/OUPermissionsAudit) | A read-only PowerShell audit of Active Directory OU permissions: resolves every ACE to what it actually allows in plain language, flags non–Tier 0 principals with dangerous rights (DCSync, write-owner, GPO edit), and emits one interactive HTML report. No RSAT required. |
 
 ## Why these projects
 
@@ -48,6 +49,9 @@ detection languages), not as a buzzword.
 - **The ATT&CK coverage tracker** shows detection-program maturity — measuring
   what the detections actually cover against the adversary playbook, gaps
   included, instead of just adding more rules.
+- **The AD OU permission audit** shows identity-tier / attack-path thinking —
+  turning raw AD ACEs into the handful that actually enable domain takeover, in
+  a safe read-only script that runs anywhere without RSAT.
 - **The Detection-as-Code CI** shows detection engineering as a software
   discipline — detections are version-controlled, validated, and gated in CI
   like any other code, not hand-edited in a console.
