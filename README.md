@@ -24,6 +24,7 @@ detection languages), not as a buzzword.
 | [`attack-coverage-tracker/`](./attack-coverage-tracker) | Parses the repo's Defender/Sentinel/Sigma detections, maps them to MITRE ATT&CK, and reports coverage — an ATT&CK Navigator layer plus a self-contained heatmap dashboard showing what's covered and where the gaps are. |
 | [`detection-ci/`](./detection-ci) | A Detection-as-Code CI gate: a GitHub Actions pipeline that parses and validates the repo's Sigma / Defender / Sentinel rules (structure, ATT&CK tags, KQL sanity) on every PR, so a broken detection never merges. |
 | [`ActiveDirectory/OUPermissionsAudit/`](./ActiveDirectory/OUPermissionsAudit) | A read-only PowerShell audit of Active Directory OU permissions: resolves every ACE to what it actually allows in plain language, flags non–Tier 0 principals with dangerous rights (DCSync, write-owner, GPO edit), and emits one interactive HTML report. No RSAT required. |
+| [`threat-feed/`](./threat-feed) | A tiered (Free / Pro) SaaS that aggregates zero-day, malware and outbreak chatter from researchers on X, Mastodon, Bluesky and Reddit: IOC extraction, severity scoring, outbreak trend detection, a real-time SSE stream, STIX 2.1 export, SSRF-safe webhook alerts, Stripe billing and a sponsored-ad Free tier. |
 
 ## Why these projects
 

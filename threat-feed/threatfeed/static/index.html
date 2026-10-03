@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Threat Feed</title>
+  <meta name="description" content="Real-time zero-day, malware and outbreak chatter from security researchers across X, Mastodon, Bluesky and Reddit.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%226%22 fill=%22none%22 stroke=%22%23d93b44%22 stroke-width=%222%22/%3E%3Ccircle cx=%228%22 cy=%228%22 r=%222.5%22 fill=%22%23d93b44%22/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo" aria-hidden="true">◉</span> Threat Feed</div>
+    <div id="liveState" class="live-state"></div>
+    <nav class="top-actions">
+      <button class="ghost" id="pricingBtn">Pricing</button>
+      <span id="tierBadge" class="badge"></span>
+      <button class="ghost" id="accountBtn">Sign in</button>
+      <button class="primary" id="upgradeBtn" hidden>Upgrade</button>
+    </nav>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main class="layout">
+    <aside class="filters" aria-label="Filters">
+      <label>Search<input id="q" type="search" placeholder="CVE, malware family, @handle…" maxlength="200"></label>
+      <label>Minimum severity
+        <select id="minSev">
+          <option value="0">All</option><option value="25">Medium+</option>
+          <option value="50">High+</option><option value="75">Critical</option>
+        </select>
+      </label>
+      <label>Source<select id="source"><option value="">All sources</option></select></label>
+      <div class="label">Category</div>
+      <div id="cats" class="chips"></div>
+    </aside>
+
+    <section class="feed" aria-live="polite">
+      <div id="feed"></div>
+      <button id="more" class="ghost wide" hidden>Load older</button>
+      <p id="empty" class="muted" hidden>Nothing matches yet. New posts arrive every poll cycle.</p>
+    </section>
+
+    <aside class="side">
+      <section id="proTools" class="card" hidden>
+        <h2>Pro tools</h2>
+        <div class="tool-row">
+          <a class="btn ghost" id="csvBtn">Export IOCs · CSV</a>
+          <a class="btn ghost" id="stixBtn">Export · STIX 2.1</a>
+        </div>
+        <div class="tool-row">
+          <button class="ghost" id="watchBtn">Watchlists &amp; alerts</button>
+          <button class="ghost" id="keysBtn">API keys</button>
+        </div>
+        <button class="link small" id="manageBtn">Manage subscription</button>
+      </section>
+      <section class="card">
+        <h2>Trending now</h2>
+        <ol id="trends" class="trends"></ol>
+        <p id="trendsMore" class="muted small" hidden></p>
+      </section>
+      <section id="sideAd" class="card ad" hidden></section>
+    </aside>
+  </main>
+
+  <dialog id="authDlg">
+    <form id="authForm" method="dialog">
+      <h2 id="authTitle">Sign in</h2>
+      <label>Email<input name="email" type="email" required autocomplete="email"></label>
+      <label>Password<input name="password" type="password" required minlength="10" autocomplete="current-password"></label>
+      <p id="authErr" class="error" hidden></p>
+      <div class="row">
+        <button class="primary" value="submit">Continue</button>
+        <button class="link" type="button" id="authToggle">Create an account instead</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="pricingDlg">
+    <h2>Plans</h2>
+    <div id="plans" class="plans"></div>
+    <div class="row end"><button class="ghost" data-close>Close</button></div>
+  </dialog>
+
+  <dialog id="watchDlg">
+    <h2>Watchlists</h2>
+    <p class="muted small">Matching posts are pushed to your webhook (Slack, Teams or Discord incoming-webhook URLs work).</p>
+    <ul id="watchList" class="list"></ul>
+    <form id="watchForm">
+      <label>Name<input name="name" required maxlength="80" placeholder="Our VPN stack"></label>
+      <label>Keywords (comma-separated)<input name="keywords" placeholder="EdgeGate, CVE-2026-12345, FortiOS"></label>
+      <label>Minimum severity<input name="min_severity" type="number" min="0" max="100" value="50"></label>
+      <label>Webhook URL (https)<input name="webhook_url" type="url" placeholder="https://hooks.slack.com/services/…"></label>
+      <p id="watchErr" class="error" hidden></p>
+      <div class="row"><button class="primary">Add watchlist</button><button class="ghost" type="button" data-close>Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="keysDlg">
+    <h2>API keys</h2>
+    <p class="muted small">Use <code>Authorization: Bearer &lt;key&gt;</code> against <code>/api/feed</code>, <code>/api/trends</code>, <code>/api/export/*</code> and <code>/api/stream</code>.</p>
+    <ul id="keyList" class="list"></ul>
+    <p id="newKey" class="newkey" hidden></p>
+    <div class="row"><button class="primary" id="mintKey">Create key</button><button class="ghost" data-close>Close</button></div>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

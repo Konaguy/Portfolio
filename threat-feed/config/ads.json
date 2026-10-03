@@ -1,0 +1,23 @@
+{
+  "_comment": "House / direct-sold ads shown to Free users. Replace these placeholders with real campaigns. Landing URLs must be https. weight = relative share of impressions.",
+  "ads": [
+    {
+      "id": "house-pro",
+      "advertiser": "Threat Feed Pro",
+      "headline": "See it 15 minutes sooner",
+      "body": "Real-time stream, X researcher coverage, IOC exports (CSV / STIX 2.1) and webhook alerts.",
+      "cta": "Upgrade to Pro",
+      "url": "https://example.com/pricing",
+      "weight": 3
+    },
+    {
+      "id": "sponsor-placeholder-edr",
+      "advertiser": "Your EDR Vendor Here",
+      "headline": "Reach the people who triage zero-days",
+      "body": "Sponsored placements in Threat Feed reach SOC analysts, threat hunters and IR leads.",
+      "cta": "Advertise with us",
+      "url": "https://example.com/advertise",
+      "weight": 1
+    }
+  ]
+}

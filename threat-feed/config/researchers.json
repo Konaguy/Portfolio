@@ -1,0 +1,20 @@
+{
+  "_comment": "Curated sources. Accounts listed under x.handles, mastodon.accounts and bluesky.trusted get a severity boost as trusted researchers. Building this list is your editorial edge: vet each account before adding it.",
+  "x": {
+    "_comment": "Requires THREATFEED_X_BEARER_TOKEN (X API Basic tier or higher). Add researcher handles without the @.",
+    "handles": [],
+    "keywords": []
+  },
+  "mastodon": {
+    "instance": "infosec.exchange",
+    "hashtags": ["threatintel", "malware", "0day", "ransomware", "cve", "dfir"],
+    "accounts": []
+  },
+  "bluesky": {
+    "queries": ["#threatintel", "#malware", "zero-day exploited", "ransomware"],
+    "trusted": []
+  },
+  "reddit": {
+    "subreddits": ["netsec", "blueteamsec", "cybersecurity"]
+  }
+}

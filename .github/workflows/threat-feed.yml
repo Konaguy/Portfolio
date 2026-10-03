@@ -1,0 +1,26 @@
+name: Threat Feed tests
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["threat-feed/**", ".github/workflows/threat-feed.yml"]
+  pull_request:
+    paths: ["threat-feed/**", ".github/workflows/threat-feed.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: threat-feed
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
