@@ -12,6 +12,14 @@ Answers are produced as schema-validated structured output from **Claude**,
 with a hallucinated-citation guard so the bot can't cite a finding it wasn't
 actually shown.
 
+## Try it in Google Colab
+
+Run the whole pipeline in your browser — clone, ingest the sample Tenable + policy corpus, ask the agent questions, and simulate an Azure Defender scan — no local setup:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Konaguy/Portfolio/blob/claude/ai-secops-rag/vuln-management-rag/colab_demo.ipynb)
+
+Runs fully offline by default (stub LLM + dependency-free embedder); add an Anthropic API key in the notebook for real Claude answers.
+
 ## Why this exists
 
 Vulnerability scanners produce thousands of findings; the hard part is the
